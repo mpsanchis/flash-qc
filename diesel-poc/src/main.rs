@@ -1,5 +1,6 @@
 use diesel::prelude::*;
 use flash_qc::{get_connection, models::*};
+use rocket::response::{Responder, content::RawHtml};
 use rocket::serde::json::Json;
 use serde_json::json;
 #[macro_use]
@@ -7,24 +8,68 @@ extern crate rocket;
 
 use flash_qc::schema::{card_tags_link, cards, tags};
 
+#[derive(Responder)]
+#[response(status = 200, content_type = "json")]
+struct JsonWithHeaders {
+    inner: Json<serde_json::Value>,
+    cors_origin: rocket::http::Header<'static>,
+}
+
+impl JsonWithHeaders {
+    fn new(json: Json<serde_json::Value>) -> Self {
+        Self {
+            inner: json,
+            cors_origin: rocket::http::Header::new("Access-Control-Allow-Origin", "*"),
+        }
+    }
+}
+
 #[get("/")]
 fn index() -> &'static str {
     "Hello, world!"
 }
 
 #[get("/tags")]
-fn tags_route() -> Json<serde_json::Value> {
+fn tags_route() -> JsonWithHeaders {
     let connection = get_connection();
     let mut conn = connection.lock().unwrap();
 
-    let results: Vec<Tag> = tags::table
+    let results = tags::table
+        .select(Tag::as_select())
+        .load::<Tag>(&mut *conn)
+        .expect("Error loading cards with tags");
+
+    let mut current_tags: Vec<&Tag> = Vec::new();
+    for tag in &results {
+        current_tags.push(tag);
+    }
+
+    JsonWithHeaders::new(Json(json!({
+        "tags": current_tags
+    })))
+}
+
+#[get("/tags-html")]
+fn tags_html() -> RawHtml<String> {
+    let connection = get_connection();
+    let mut conn = connection.lock().unwrap();
+
+    let results = tags::table
         .select(Tag::as_select())
         .load::<Tag>(&mut *conn)
         .expect("Error loading tags");
 
-    Json(json!({
-        "tags": results
-    }))
+    let mut html = String::from(
+        "<!DOCTYPE html><html><head><title>Tags</title></head><body><h1>Tags</h1><ul>",
+    );
+
+    for tag in results {
+        html.push_str(&format!("<li>{}</li>", tag.name));
+    }
+
+    html.push_str("</ul></body></html>");
+
+    RawHtml(html)
 }
 
 #[launch]
@@ -93,5 +138,5 @@ fn rocket() -> _ {
         println!("-----------------------");
     }
 
-    rocket::build().mount("/", routes![index, tags_route])
+    rocket::build().mount("/", routes![index, tags_route, tags_html, iframe_test])
 }
