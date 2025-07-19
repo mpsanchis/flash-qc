@@ -16,6 +16,14 @@ diesel::table! {
 }
 
 diesel::table! {
+    plugins (id) {
+        id -> Int4,
+        name -> Varchar,
+        link -> Text,
+    }
+}
+
+diesel::table! {
     tags (id) {
         id -> Int4,
         #[max_length = 255]
@@ -24,7 +32,22 @@ diesel::table! {
     }
 }
 
+diesel::table! {
+    users (id) {
+        id -> Int4,
+        name -> Varchar,
+        id_plugin -> Int4,
+    }
+}
+
 diesel::joinable!(card_tags_link -> cards (card_id));
 diesel::joinable!(card_tags_link -> tags (tag_id));
+diesel::joinable!(users -> plugins (id_plugin));
 
-diesel::allow_tables_to_appear_in_same_query!(card_tags_link, cards, tags,);
+diesel::allow_tables_to_appear_in_same_query!(
+    card_tags_link,
+    cards,
+    plugins,
+    tags,
+    users,
+);

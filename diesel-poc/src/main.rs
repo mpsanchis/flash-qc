@@ -3,6 +3,7 @@ use flash_qc::{get_connection, models::*};
 use rocket::response::{Responder, content::RawHtml};
 use rocket::serde::json::Json;
 use serde_json::json;
+use std::fs;
 #[macro_use]
 extern crate rocket;
 
@@ -71,6 +72,88 @@ fn tags_html() -> RawHtml<String> {
     RawHtml(html)
 }
 
+#[get("/user/<user>/plugin/<plugin_id>")]
+fn user_plugin_route(user: String, plugin_id: String) -> RawHtml<String> {
+    let plugins_dir = "diesel-poc-requests/plugins";
+    
+    // Find the plugin folder that starts with plugin_id followed by underscore
+    let plugin_folder = match fs::read_dir(plugins_dir) {
+        Ok(entries) => {
+            entries
+                .filter_map(|entry| entry.ok())
+                .find(|entry| {
+                    if let Some(name) = entry.file_name().to_str() {
+                        name.starts_with(&format!("{}_", plugin_id))
+                    } else {
+                        false
+                    }
+                })
+                .and_then(|entry| entry.file_name().to_str().map(|s| s.to_string()))
+        }
+        Err(_) => None,
+    };
+    
+    match plugin_folder {
+        Some(folder_name) => {
+            let plugin_path = format!("{}/{}/index.html", plugins_dir, folder_name);
+            match fs::read_to_string(&plugin_path) {
+                Ok(html_content) => RawHtml(html_content),
+                Err(_) => {
+                    let fallback_html = format!(
+                        r#"<!DOCTYPE html>
+<html>
+<head>
+    <title>Plugin File Not Found - {} - {}</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 20px; }}
+        .error-box {{ background: #ffe6e6; padding: 20px; border-radius: 8px; border: 1px solid #ff9999; margin: 20px 0; }}
+    </style>
+</head>
+<body>
+    <h1>Flash QC - Plugin File Not Found</h1>
+    <div class="error-box">
+        <h2>Error</h2>
+        <p><strong>User:</strong> {}</p>
+        <p><strong>Plugin ID:</strong> {}</p>
+        <p><strong>Plugin Folder:</strong> {}</p>
+        <p>index.html not found in plugin folder</p>
+    </div>
+</body>
+</html>"#,
+                        user, plugin_id, user, plugin_id, folder_name
+                    );
+                    RawHtml(fallback_html)
+                }
+            }
+        }
+        None => {
+            let fallback_html = format!(
+                r#"<!DOCTYPE html>
+<html>
+<head>
+    <title>Plugin Not Found - {} - {}</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 20px; }}
+        .error-box {{ background: #ffe6e6; padding: 20px; border-radius: 8px; border: 1px solid #ff9999; margin: 20px 0; }}
+    </style>
+</head>
+<body>
+    <h1>Flash QC - Plugin Not Found</h1>
+    <div class="error-box">
+        <h2>Error</h2>
+        <p><strong>User:</strong> {}</p>
+        <p><strong>Plugin ID:</strong> {}</p>
+        <p>No plugin folder found starting with "{}_"</p>
+    </div>
+</body>
+</html>"#,
+                user, plugin_id, user, plugin_id, plugin_id
+            );
+            RawHtml(fallback_html)
+        }
+    }
+}
+
 #[launch]
 fn rocket() -> _ {
     let connection = get_connection();
@@ -137,5 +220,5 @@ fn rocket() -> _ {
         println!("-----------------------");
     }
 
-    rocket::build().mount("/", routes![index, tags_route, tags_html, iframe_test])
+    rocket::build().mount("/", routes![index, tags_route, tags_html, user_plugin_route])
 }
