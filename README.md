@@ -50,3 +50,9 @@ App to create flashcards for anything (cualquier cosa)
 - Phone apps dont have plugins
   - The experience in android and iOS is very different
   - Offer different features
+
+# Rust tooling
+
+## Migration add
+
+`diesel migration generate <migration_name>`
