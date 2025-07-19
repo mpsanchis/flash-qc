@@ -38,7 +38,6 @@ fn tags_route() -> JsonWithHeaders {
         .select(Tag::as_select())
         .load::<Tag>(&mut *conn)
         .expect("Error loading cards with tags");
-
     let mut current_tags: Vec<&Tag> = Vec::new();
     for tag in &results {
         current_tags.push(tag);
