@@ -1,6 +1,11 @@
 # flash-qc
 App to create flashcards for anything (cualquier cosa)
 
+## Projects
+
+- **docker-compose-poc/**: Docker Compose multi-service architecture demonstration with Nginx, Astro frontend, Rust backend, and PostgreSQL
+- **diesel-poc/**: Diesel ORM exploration (Rust)
+
 # Architectural Discussion
 
 (Add what you think is best :D)
