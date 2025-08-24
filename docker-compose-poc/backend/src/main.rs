@@ -1,8 +1,8 @@
 #[macro_use] extern crate rocket;
 
-use rocket::{State, response::content};
+use rocket::response::{content, status};
 use rocket::fairing::{Fairing, Info, Kind};
-use rocket::http::Header;
+use rocket::http::{Header, Status};
 use rocket::{Request, Response};
 use std::env;
 use tokio_postgres::{NoTls, Client};
@@ -53,7 +53,7 @@ async fn test_db_connection(database_url: &str) -> bool {
                     eprintln!("Database connection error: {}", e);
                 }
             });
-            
+
             match client.query("SELECT 1", &[]).await {
                 Ok(_) => true,
                 Err(e) => {
@@ -73,13 +73,13 @@ async fn test_db_connection(database_url: &str) -> bool {
 async fn health() -> content::RawJson<String> {
     let database_url = env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres://postgres:password@postgres:5432/mydb".to_string());
-    
+
     let db_status = if test_db_connection(&database_url).await {
         "connected"
     } else {
         "disconnected"
     };
-    
+
     let response = format!(r#"{{"status": "healthy", "database": "{}"}}"#, db_status);
     content::RawJson(response)
 }
@@ -92,20 +92,20 @@ fn api_hello() -> &'static str {
 async fn get_database_connection() -> Result<Client, tokio_postgres::Error> {
     let database_url = env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres://postgres:password@postgres:5432/mydb".to_string());
-    
+
     let (client, connection) = tokio_postgres::connect(&database_url, NoTls).await?;
-    
+
     tokio::spawn(async move {
         if let Err(e) = connection.await {
             eprintln!("Database connection error: {}", e);
         }
     });
-    
+
     Ok(client)
 }
 
 #[get("/users")]
-async fn get_users() -> Result<content::RawJson<String>, &'static str> {
+async fn get_users() -> Result<content::RawJson<String>, status::Custom<String>> {
     match get_database_connection().await {
         Ok(client) => {
             match client.query("SELECT id, name, email, created_at::TEXT FROM users ORDER BY id", &[]).await {
@@ -122,23 +122,23 @@ async fn get_users() -> Result<content::RawJson<String>, &'static str> {
                     }
                     match serde_json::to_string(&users) {
                         Ok(json) => Ok(content::RawJson(json)),
-                        Err(_) => Err("Failed to serialize users")
+                        Err(_) => Result::Err(status::Custom(Status::InternalServerError,  String::from("Failed to serialize users")))
                     }
                 },
-                Err(_) => Err("Failed to query users")
+                Err(_) => Result::Err(status::Custom(Status::InternalServerError,  String::from("Failed to query users")))
             }
         },
-        Err(_) => Err("Failed to connect to database")
+        Err(_) => Result::Err(status::Custom(Status::InternalServerError, String::from("Failed to connect to database")))
     }
 }
 
 #[launch]
 fn rocket() -> _ {
     println!("Starting Rocket backend...");
-    
+
     let database_url = env::var("DATABASE_URL")
         .unwrap_or_else(|_| "postgres://postgres:password@postgres:5432/mydb".to_string());
-    
+
     println!("Database URL: {}", database_url);
 
     rocket::build()

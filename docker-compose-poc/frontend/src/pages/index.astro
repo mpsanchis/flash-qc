@@ -6,23 +6,27 @@ const backendResponse = await fetch(`${backendUrl}/health`).catch((e) => {
 });
 const message = backendResponse ? await backendResponse.text() : 'Backend not available';
 
-const usersResponse = await fetch(`${backendUrl}/users`).catch((e) => {
-  console.error(`Could not obtain users from backend. Error:\n${e}`);
-  null;
-});
-
 let users = [];
 let usersError = null;
 
+const usersResponse = await fetch(`${backendUrl}/users`).catch((e) => {
+    const noUsersResponse = `Could not obtain a response from /users endpoint. Error:\n${e}`;
+    console.error(noUsersResponse);
+    usersError = noUsersResponse;
+});
+
+
 if (usersResponse) {
-    try {
-        const usersText = await usersResponse.text();
-        users = JSON.parse(usersText);
-    } catch (error) {
-        usersError = 'Failed to fetch users data';
+    switch (usersResponse.status) {
+        case 200:
+            users = await usersResponse.json();
+            break;
+        case 500:
+            usersError = 'Failed to fetch users data';
+            break;
+        default:
+            usersError = `Endpoint '/users' returned unexpected status: ${usersResponse.status}`;
     }
-} else {
-    usersError = 'Cannot connect to database';
 }
 ---
 
