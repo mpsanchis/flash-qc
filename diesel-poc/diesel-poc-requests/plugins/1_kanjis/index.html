@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"W - Kanji</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Noto Serif JP', serif;
+        }
+
+        .kanji-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 60px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .kanji {
+            font-size: 12rem;
+            color: #2c3e50;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .kanji:hover {
+            transform: scale(1.05);
+        }
+
+        .meaning {
+            font-size: 1.5rem;
+            color: #7f8c8d;
+            margin-top: 20px;
+            font-weight: 400;
+        }
+
+        .reading {
+            font-size: 1.2rem;
+            color: #95a5a6;
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="kanji-container">
+        <div class="kanji">�</div>
+        <div class="meaning">Beauty</div>
+        <div class="reading">s (bi)</div>
+    </div>
+</body>
+
+</html>
