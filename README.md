@@ -13,15 +13,15 @@ Traditional Front-Back system. Back: Lambdas (we could have lots of users before
 
 Tech:
     - Front: Astro
-
     - Back: Rust (Rocket, Diesel)
 
-# Monetization: 
-    - We could give users a given amount of free flashcards per day and charge after that. Of course, free at the beginning.
+## Monetization
 
-# Plugins: 
-    - Inyectable javascript with a defined aplication interface.
+- We could give users a given amount of free flashcards per day and charge after that. Of course, free at the beginning.
 
+## Plugins
+
+- Inyectable javascript with a defined aplication interface.
 
 ## Rust tooling
 
@@ -46,9 +46,20 @@ Tech:
   - The experience in android and iOS is very different
   - Offer different features
 
-# Setup
+## Setup
 
-## First time ever, assuming you have rust
+### First time ever
+
+#### Running the pre-commit hook setup
+
+Make the setup script executable and run it (this will install the project's pre-commit hooks):
+
+```bash
+chmod +x ./setup.sh && ./setup.sh
+```
+
+#### Assuming you have rust
+
 ```sh
 
 sudo apt install libpq-dev
@@ -58,12 +69,11 @@ cargo bininstall diesel_cli
 diesel setup
 ```
 
-## On every start
+### On every start
 
 `diesel migration run`
 
-
-## Adding new Migrations
+### Adding new Migrations
 
 `diesel migration generate <migration_name>`
 
