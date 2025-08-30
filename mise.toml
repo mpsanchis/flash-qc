@@ -1,8 +1,9 @@
 [tools]
-node = '24.6.0'
-rust = '1.89.0'
+node = '24.7.0'
 pnpm = '10.15.0'
-postgres = "17.6"
+postgres = '17.6'
+rust = '1.89.0'
+uv = '0.8.14'
 
 [tasks.bootstrap]
 run = """
