@@ -44,10 +44,4 @@ diesel::joinable!(card_tags_link -> cards (card_id));
 diesel::joinable!(card_tags_link -> tags (tag_id));
 diesel::joinable!(users -> plugins (id_plugin));
 
-diesel::allow_tables_to_appear_in_same_query!(
-    card_tags_link,
-    cards,
-    plugins,
-    tags,
-    users,
-);
+diesel::allow_tables_to_appear_in_same_query!(card_tags_link, cards, plugins, tags, users,);

@@ -75,24 +75,22 @@ fn tags_html() -> RawHtml<String> {
 #[get("/user/<user>/plugin/<plugin_id>")]
 fn user_plugin_route(user: String, plugin_id: String) -> RawHtml<String> {
     let plugins_dir = "diesel-poc-requests/plugins";
-    
+
     // Find the plugin folder that starts with plugin_id followed by underscore
     let plugin_folder = match fs::read_dir(plugins_dir) {
-        Ok(entries) => {
-            entries
-                .filter_map(|entry| entry.ok())
-                .find(|entry| {
-                    if let Some(name) = entry.file_name().to_str() {
-                        name.starts_with(&format!("{}_", plugin_id))
-                    } else {
-                        false
-                    }
-                })
-                .and_then(|entry| entry.file_name().to_str().map(|s| s.to_string()))
-        }
+        Ok(entries) => entries
+            .filter_map(|entry| entry.ok())
+            .find(|entry| {
+                if let Some(name) = entry.file_name().to_str() {
+                    name.starts_with(&format!("{}_", plugin_id))
+                } else {
+                    false
+                }
+            })
+            .and_then(|entry| entry.file_name().to_str().map(|s| s.to_string())),
         Err(_) => None,
     };
-    
+
     match plugin_folder {
         Some(folder_name) => {
             let plugin_path = format!("{}/{}/index.html", plugins_dir, folder_name);
@@ -220,5 +218,8 @@ fn rocket() -> _ {
         println!("-----------------------");
     }
 
-    rocket::build().mount("/", routes![index, tags_route, tags_html, user_plugin_route])
+    rocket::build().mount(
+        "/",
+        routes![index, tags_route, tags_html, user_plugin_route],
+    )
 }
