@@ -6,5 +6,5 @@ CREATE TABLE plugins (
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name VARCHAR NOT NULL,
-    id_plugin INTEGER NOT NULL REFERENCES plugins(id)
+    id_plugin INTEGER NOT NULL REFERENCES plugins (id)
 );

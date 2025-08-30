@@ -10,15 +10,17 @@ This project demonstrates a simple multi-service architecture using Docker Compo
 ## Quick Start
 
 1. Build and start all services:
+
    ```bash
    docker-compose up -d --build
    ```
 
 2. Access the application:
-   - Frontend: http://localhost
-   - Backend API: http://localhost/api/hello
+   - Frontend: <http://localhost>
+   - Backend API: <http://localhost/api/hello>
 
 3. Stop all services:
+
    ```bash
    docker-compose down
    ```
@@ -40,17 +42,20 @@ This project demonstrates a simple multi-service architecture using Docker Compo
 ### Docker Compose Build Notes
 
 **When you need to build:**
+
 - First time running `docker-compose up`
 - After changing Dockerfile or build context files
 - After adding new dependencies (package.json, Cargo.toml, etc.)
 - After modifying source code that gets copied into the image
 
 **When you don't need to build:**
+
 - Just restarting existing containers
 - Only changed environment variables or volumes
 - Only using pre-built images (like PostgreSQL)
 
 **Useful commands:**
+
 ```bash
 # Uses existing images, builds if none exist
 docker-compose up
@@ -68,6 +73,7 @@ docker-compose up --build <service>
 ### Database Access
 
 PostgreSQL is configured with `ports` instead of `expose` for development convenience:
+
 - **`expose`**: Makes port available only to other containers within the Docker network
 - **`ports`**: Maps container port to host port, allows external access from localhost
 

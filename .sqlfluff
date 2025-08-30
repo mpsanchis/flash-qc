@@ -5,5 +5,5 @@ dialect = postgres
 exclude_rules = L016
 
 # You can also configure indentation, capitalization, etc.
-[sqlfluff:rules:L010]  # capitalisation of keywords
+[sqlfluff:rules:capitalisation.keywords]  # capitalisation of keywords
 capitalisation_policy = upper

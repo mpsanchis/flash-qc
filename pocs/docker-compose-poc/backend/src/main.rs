@@ -1,12 +1,13 @@
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
 
-use rocket::response::{content, status};
 use rocket::fairing::{Fairing, Info, Kind};
 use rocket::http::{Header, Status};
+use rocket::response::{content, status};
 use rocket::{Request, Response};
-use std::env;
-use tokio_postgres::{NoTls, Client};
 use serde::{Deserialize, Serialize};
+use std::env;
+use tokio_postgres::{Client, NoTls};
 
 #[derive(Serialize, Deserialize)]
 struct User {
@@ -23,13 +24,16 @@ impl Fairing for CORS {
     fn info(&self) -> Info {
         Info {
             name: "Add CORS headers to responses",
-            kind: Kind::Response
+            kind: Kind::Response,
         }
     }
 
     async fn on_response<'r>(&self, _request: &'r Request<'_>, response: &mut Response<'r>) {
         response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
-        response.set_header(Header::new("Access-Control-Allow-Methods", "POST, GET, PATCH, OPTIONS"));
+        response.set_header(Header::new(
+            "Access-Control-Allow-Methods",
+            "POST, GET, PATCH, OPTIONS",
+        ));
         response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
         response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
     }
@@ -108,7 +112,13 @@ async fn get_database_connection() -> Result<Client, tokio_postgres::Error> {
 async fn get_users() -> Result<content::RawJson<String>, status::Custom<String>> {
     match get_database_connection().await {
         Ok(client) => {
-            match client.query("SELECT id, name, email, created_at::TEXT FROM users ORDER BY id", &[]).await {
+            match client
+                .query(
+                    "SELECT id, name, email, created_at::TEXT FROM users ORDER BY id",
+                    &[],
+                )
+                .await
+            {
                 Ok(rows) => {
                     let mut users = Vec::new();
                     for row in rows {
@@ -122,13 +132,22 @@ async fn get_users() -> Result<content::RawJson<String>, status::Custom<String>>
                     }
                     match serde_json::to_string(&users) {
                         Ok(json) => Ok(content::RawJson(json)),
-                        Err(_) => Result::Err(status::Custom(Status::InternalServerError,  String::from("Failed to serialize users")))
+                        Err(_) => Result::Err(status::Custom(
+                            Status::InternalServerError,
+                            String::from("Failed to serialize users"),
+                        )),
                     }
-                },
-                Err(_) => Result::Err(status::Custom(Status::InternalServerError,  String::from("Failed to query users")))
+                }
+                Err(_) => Result::Err(status::Custom(
+                    Status::InternalServerError,
+                    String::from("Failed to query users"),
+                )),
             }
-        },
-        Err(_) => Result::Err(status::Custom(Status::InternalServerError, String::from("Failed to connect to database")))
+        }
+        Err(_) => Result::Err(status::Custom(
+            Status::InternalServerError,
+            String::from("Failed to connect to database"),
+        )),
     }
 }
 
@@ -144,8 +163,9 @@ fn rocket() -> _ {
     rocket::build()
         .attach(CORS)
         .mount("/", routes![index, hello, health, api_hello, get_users])
-        .configure(rocket::Config::figment()
-            .merge(("address", "0.0.0.0"))
-            .merge(("port", 8000))
+        .configure(
+            rocket::Config::figment()
+                .merge(("address", "0.0.0.0"))
+                .merge(("port", 8000)),
         )
 }
