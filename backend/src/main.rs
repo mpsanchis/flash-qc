@@ -1,8 +1,15 @@
 mod models;
+mod routes;
 mod schema;
 
 use models::{Deck, FlashcardInstance, FlashcardTemplate};
-fn main() {
+use rocket::{launch, routes};
+use routes::index;
+#[macro_use]
+extern crate rocket;
+
+#[launch]
+fn rocket() -> _ {
     let deck = Deck {
         id: 1,
         name: "Sample Deck".to_string(),
@@ -26,4 +33,6 @@ fn main() {
     println!("Deck: {:?}", deck);
     println!("Template: {:?}", template);
     println!("Instance: {:?}", instance);
+
+    rocket::build().mount("/", routes![index])
 }
