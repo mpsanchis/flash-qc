@@ -51,7 +51,19 @@ App to create flashcards for anything (cualquier cosa)
   - The experience in android and iOS is very different
   - Offer different features
 
-# Rust tooling
+# Setup
+
+- Install Diesel CLI
+
+```sh
+
+sudo apt install libpq-dev
+sudo apt install libsqlite3-dev
+cargo build
+cargo install diesel_cli
+diesel setup
+diesel migration run
+```
 
 ## Migration add
 
