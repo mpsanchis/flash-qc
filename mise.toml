@@ -2,3 +2,11 @@
 node = '24.6.0'
 rust = '1.89.0'
 pnpm = '10.15.0'
+postgres = "17.6"
+
+[tasks.bootstrap]
+run = """
+#!/bin/bash
+cargo install diesel_cli
+diesel migration run
+"""
