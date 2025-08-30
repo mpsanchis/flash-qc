@@ -11,3 +11,6 @@ run = """
 cargo install diesel_cli
 diesel migration run
 """
+
+[env]
+DATABASE_URL="postgres://flashqc:1234@localhost/flashqc"
