@@ -8,9 +8,23 @@ uv = '0.8.14'
 [tasks.bootstrap]
 run = """
 #!/bin/bash
-cargo install diesel_cli
+WORKSPACE_ROOT=$PWD
+
+cargo install --path tools/fqc --force
+fqc bootstrap
+cargo install diesel_cli --no-default-features --features postgres
+
+cd $WORKSPACE_ROOT/backend/
 diesel migration run
 """
 
+[tasks.build]
+run = """
+#!/bin/bash
+cargo build
+cargo install --path tools/fqc --force
+# TO DO: add "pnpm build" (pnpm workspaces as well?)
+"""
+
 [env]
-DATABASE_URL="postgres://flashqc:1234@localhost/flashqc"
+DATABASE_URL = 'postgres://flashqc:1234@localhost/flashqc'
