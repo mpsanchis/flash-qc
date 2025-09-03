@@ -8,6 +8,10 @@ uv = '0.8.14'
 [tasks.bootstrap]
 run = """
 #!/bin/bash
-cargo install diesel_cli
+cd ./backend/
+cargo install diesel_cli --no-default-features --features postgres
 diesel migration run
 """
+
+[env]
+DATABASE_URL = 'postgres://flashqc:1234@localhost/flashqc'
