@@ -28,7 +28,7 @@ Tech:
 - Diesel as ORM:
     Tested. It does require keeping the migrations manually made with SQL, but otherwise seems to work very well.
 - Rocket for HTTP engine:
-    Tested.  
+    Tested.
 
 ## Interesting ideas
 
@@ -50,30 +50,29 @@ Tech:
 
 ### First time ever
 
-#### Running the pre-commit hook setup
+Prerequisites:
+- have `mise` installed
+- have the necessary requirements for a postgres DB
+  - You might need: `sudo apt install libpq-dev`
 
-Make the setup script executable and run it (this will install the project's pre-commit hooks):
+Steps:
+- `mise install` (might fail if you don't have system libs for postgres, but you can also decide to install it with another tool such as [postgresapp](https://postgresapp.com))
+- `mise bootstrap`
 
-```bash
-chmod +x ./setup.sh && ./setup.sh
-```
 
-#### Assuming you have rust
+### Daily development
 
-```sh
+Steps:
+- `mise build`
+- `mise serve` (TODO)
+- `diesel migration run` (TODO: define when, and potentiall move to fqc)
 
-sudo apt install libpq-dev
-sudo apt install libsqlite3-dev
-cargo build
-cargo bininstall diesel_cli
-diesel setup
-```
+### Diesel commands
 
-### On every start
-
-`diesel migration run`
-
-### Adding new Migrations
+TODO: might be hidden by `fqc`, if we only need to
+- clear the db, to drop all "business" tables (e.g.: `fqc db clear`)
+- re-create the db tables (e.g.: `fqc db generate` -> maybe delegate to `diesel migration run`?)
+- fill the db with dummy data from somewhere (e.g.: `fqc db fill`, or `fqc db populate`)
 
 `diesel migration generate <migration_name>`
 
