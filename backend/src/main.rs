@@ -36,7 +36,5 @@ fn rocket() -> _ {
     println!("Template: {:?}", template);
     println!("Instance: {:?}", instance);
 
-    rocket::build()
-      .attach(Cors)
-      .mount("/", routes![index])
+    rocket::build().attach(Cors).mount("/", routes![index])
 }
