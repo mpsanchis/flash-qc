@@ -1,8 +1,10 @@
+name: Rust CI
 on:
   push:
     branches: [main]
+    paths: &rust_paths ['**/*.rs', '**/Cargo.toml', '**/Cargo.lock', '**/build.rs', .cargo/**]
   pull_request:
-name: Clippy check
+    paths: *rust_paths
 # Make sure CI fails on all warnings, including Clippy lints
 env:
   RUSTFLAGS: -Dwarnings
