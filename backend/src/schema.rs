@@ -29,8 +29,4 @@ diesel::table! {
 diesel::joinable!(flashcard_instance -> deck (deck_id));
 diesel::joinable!(flashcard_instance -> flashcard_template (template_id));
 
-diesel::allow_tables_to_appear_in_same_query!(
-    deck,
-    flashcard_instance,
-    flashcard_template,
-);
+diesel::allow_tables_to_appear_in_same_query!(deck, flashcard_instance, flashcard_template,);
