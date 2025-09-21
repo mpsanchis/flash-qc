@@ -104,7 +104,7 @@ The plugin renders inside an iFrame and it obtains cards through a postMessage A
 
 ### The responsabilities of the flash-qc front are the following:
 
-- Generate an iFrame for the plugin to be rendered.
+- Generate some sort of container where the plugin is rendered. This could be the WASM VM, or an HTML iFrame. 
 - Disponibilize a postMessage API to communicate with the iFrame and behave as an HTTP client for the flash-qc backend server.
 - Visual interface for user creation, edits and deletion of user data.
 - Inspecting other user profiles
