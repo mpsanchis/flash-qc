@@ -5,7 +5,9 @@ mod schema;
 use models::{Deck, FlashcardInstance, FlashcardTemplate};
 use rocket::{launch, routes};
 use routes::index;
-#[macro_use]
+
+use crate::routes::Cors;
+
 extern crate rocket;
 
 #[launch]
@@ -34,5 +36,7 @@ fn rocket() -> _ {
     println!("Template: {:?}", template);
     println!("Instance: {:?}", instance);
 
-    rocket::build().mount("/", routes![index])
+    rocket::build()
+      .attach(Cors)
+      .mount("/", routes![index])
 }
