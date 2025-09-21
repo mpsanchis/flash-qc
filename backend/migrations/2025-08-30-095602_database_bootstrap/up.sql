@@ -48,9 +48,10 @@ CREATE TABLE IF NOT EXISTS flashcard (
 COMMENT ON COLUMN flashcard.VERSION IS 'Incremented each time the flashcard is updated';
 
 CREATE TABLE IF NOT EXISTS flashcard_metadata (
-  ID_USER INTEGER NOT NULL REFERENCES "user"(ID),
-  ID_FLASHCARD INTEGER NOT NULL REFERENCES flashcard(ID),
-  score INTEGER NOT NULL DEFAULT 0
+  id_user INTEGER NOT NULL REFERENCES "user"(ID),
+  id_flashcard INTEGER NOT NULL REFERENCES flashcard(ID),
+  score INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (ID_USER, ID_FLASHCARD)
 );
 
 COMMENT ON COLUMN flashcard_metadata.score IS 'This is a simplified score for now';
