@@ -26,5 +26,10 @@ cargo install --path tools/fqc --force
 # TO DO: add "pnpm build" (pnpm workspaces as well?)
 """
 
+[tasks.dserve]
+run = [
+  "docker compose up --build --force-recreate -d"
+]
+
 [env]
 DATABASE_URL = 'postgres://flashqc:1234@localhost/flashqc'

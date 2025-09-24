@@ -1,4 +1,4 @@
-FROM rust:1.81 as builder
+FROM rust:1.89 AS builder
 
 WORKDIR /app
 COPY Cargo.toml ./
@@ -15,8 +15,9 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-COPY --from=builder /app/target/release/dummy-backend /app/dummy-backend
+COPY --from=builder /app/target/release/flashqc-backend /app/flashqc-backend
+COPY Rocket.toml /app/Rocket.toml
 
 EXPOSE 8000
 
-CMD ["./dummy-backend"]
+CMD ["./flashqc-backend"]
