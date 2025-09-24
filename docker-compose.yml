@@ -1,12 +1,10 @@
-version: "3.8"
-
 services:
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - frontend
       - backend
@@ -29,7 +27,7 @@ services:
     expose:
       - "8000"
     environment:
-      - DATABASE_URL=postgres://postgres:password@postgres:5432/mydb
+      - DATABASE_URL=postgres://postgres:flashqc:1234@localhost/flashqc
     depends_on:
       - postgres
     networks:
@@ -38,9 +36,9 @@ services:
   postgres:
     image: postgres:17
     environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: flashqc
+      POSTGRES_USER: flashqc
+      POSTGRES_PASSWORD: 1234
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres:/docker-entrypoint-initdb.d
