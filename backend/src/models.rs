@@ -9,22 +9,15 @@ pub struct Deck {
     pub name: String,
     pub description: Option<String>,
     pub deleted: bool,
-}
-#[derive(Debug, Queryable, Selectable, Deserialize, Serialize)]
-#[diesel(table_name = crate::schema::flashcard_template)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
-pub struct FlashcardTemplate {
-    pub id: i32,
-    pub fields: serde_json::Value,
-    pub deleted: bool,
+    pub plugin_id: Option<i32>,
 }
 
 #[derive(Debug, Insertable, Deserialize, Serialize, Queryable)]
-#[diesel(table_name = crate::schema::flashcard_instance)]
+#[diesel(table_name = crate::schema::flashcard)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct FlashcardInstance {
     pub id: i32,
     pub template_id: i32,
     pub deleted: bool,
-    pub deck_id: i32,
+    pub fields: serde_json::Value,
 }
