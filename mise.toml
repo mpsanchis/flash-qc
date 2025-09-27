@@ -23,7 +23,7 @@ run = """
 #!/bin/bash
 cargo build
 cargo install --path tools/fqc --force
-# TO DO: add "pnpm build" (pnpm workspaces as well?)
+pnpm --filter "flash-qc" build
 """
 
 [tasks.dserve]
