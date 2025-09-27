@@ -3,6 +3,7 @@ node = '24.7.0'
 pnpm = '10.15.0'
 postgres = '17.6'
 rust = '1.89.0'
+tmux = '3.5'
 uv = '0.8.14'
 
 [tasks.bootstrap]
@@ -30,6 +31,14 @@ pnpm --filter "flash-qc" build
 run = [
   "docker compose up --build --force-recreate -d"
 ]
+
+[tasks.serve]
+# TO DO: move script to fqc CLI
+run = [ "./tools/scripts/serve.sh" ]
+
+[tasks.stop]
+# TO DO: move script to fqc CLI
+run = [ "tmux kill-session -t flashqc" ]
 
 [env]
 DATABASE_URL = 'postgres://flashqc:1234@localhost/flashqc'
