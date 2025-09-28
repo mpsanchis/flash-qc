@@ -70,31 +70,31 @@ INSERT INTO flashcard (template_id, fields) VALUES
 (6, '{"audio": "/audio/guten_tag.mp3", "transcript": "Guten Tag", "translation": "Good day (German)"}');
 
 -- Insert mock flashcard metadata (user progress)
-INSERT INTO flashcard_metadata (ID_USER, ID_FLASHCARD, score) VALUES
+INSERT INTO flashcard_metadata (id_user, id_flashcard, version_flashcard, score) VALUES
 -- User 1 (john_doe) progress
-(1, 1, 5),
-(1, 2, 3),
-(1, 3, 4),
-(1, 4, 2),
-(1, 5, 5),
+(1, 1, 1, 5),
+(1, 2, 1, 3),
+(1, 3, 1, 4),
+(1, 4, 1, 2),
+(1, 5, 1, 5),
 
 -- User 2 (jane_smith) progress
-(2, 1, 4),
-(2, 2, 5),
-(2, 6, 3),
-(2, 7, 4),
-(2, 8, 2),
+(2, 1, 1, 4),
+(2, 2, 1, 5),
+(2, 6, 1, 3),
+(2, 7, 1, 4),
+(2, 8, 1, 2),
 
 -- User 3 (study_master) progress
-(3, 5, 5),
-(3, 6, 5),
-(3, 7, 4),
-(3, 9, 5),
-(3, 10, 4),
+(3, 5, 1, 5),
+(3, 6, 1, 5),
+(3, 7, 1, 4),
+(3, 9, 1, 5),
+(3, 10, 1, 4),
 
 -- User 4 (language_learner) progress
-(4, 1, 3),
-(4, 2, 4),
-(4, 3, 3),
-(4, 13, 2),
-(4, 14, 3);
+(4, 1, 1, 3),
+(4, 2, 1, 4),
+(4, 3, 1, 3),
+(4, 13, 1, 2),
+(4, 14, 1, 3);

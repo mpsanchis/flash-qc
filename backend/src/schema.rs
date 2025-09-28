@@ -11,7 +11,7 @@ diesel::table! {
 }
 
 diesel::table! {
-    flashcard (id) {
+    flashcard (id, version) {
         id -> Int4,
         version -> Int4,
         template_id -> Int4,
@@ -21,9 +21,10 @@ diesel::table! {
 }
 
 diesel::table! {
-    flashcard_metadata (id_user, id_flashcard) {
+    flashcard_metadata (id_user, id_flashcard, version_flashcard) {
         id_user -> Int4,
         id_flashcard -> Int4,
+        version_flashcard -> Int4,
         score -> Int4,
     }
 }
@@ -63,7 +64,6 @@ diesel::table! {
 
 diesel::joinable!(deck -> plugin (plugin_id));
 diesel::joinable!(flashcard -> flashcard_template (template_id));
-diesel::joinable!(flashcard_metadata -> flashcard (id_flashcard));
 diesel::joinable!(flashcard_metadata -> user (id_user));
 diesel::joinable!(flashcard_template_plugin -> flashcard_template (template_id));
 diesel::joinable!(flashcard_template_plugin -> plugin (plugin_id));
