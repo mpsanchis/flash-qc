@@ -38,21 +38,24 @@ CREATE TABLE IF NOT EXISTS flashcard_template_plugin (
 COMMENT ON TABLE flashcard_template_plugin IS 'Associates flashcard templates with plugins that can render or process them';
 
 CREATE TABLE IF NOT EXISTS flashcard (
-  ID SERIAL PRIMARY KEY,
+  ID SERIAL ,
   VERSION INTEGER NOT NULL DEFAULT 1,
   template_id INTEGER NOT NULL REFERENCES flashcard_template(ID),
   deleted BOOLEAN NOT NULL DEFAULT FALSE,
-  fields JSONB NOT NULL
+  fields JSONB NOT NULL,
+  PRIMARY KEY (ID, VERSION)
 );
 
 COMMENT ON COLUMN flashcard.VERSION IS 'Incremented each time the flashcard is updated';
 
 CREATE TABLE IF NOT EXISTS flashcard_metadata (
   id_user INTEGER NOT NULL REFERENCES "user"(ID),
-  id_flashcard INTEGER NOT NULL REFERENCES flashcard(ID),
+  id_flashcard INTEGER NOT NULL,
+  version_flashcard INTEGER NOT NULL,
   score INTEGER NOT NULL DEFAULT 0,
-  PRIMARY KEY (ID_USER, ID_FLASHCARD)
+  PRIMARY KEY (id_user, id_flashcard, version_flashcard),
+  FOREIGN KEY (id_flashcard, version_flashcard) REFERENCES flashcard(ID, VERSION)
 );
 
-COMMENT ON COLUMN flashcard_metadata.score IS 'This is a simplified score for now';
+COMMENT ON COLUMN flashcard_metadata.score IS 'This is a simplified score for now. If minor details on a card are changed, a copy of the last flashcard_metada is created';
 
