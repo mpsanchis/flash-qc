@@ -13,11 +13,14 @@ tmux set-option -t $SESSION_NAME history-limit 10000
 # PANE CREATION
 ## Split horizontally to create bottom pane across full width
 tmux split-window -v
+
 ## Split window vertically
 tmux select-pane -t 0
 tmux split-window -h
+
 ## Make the bottom pane smaller (about 20% of screen height)
-tmux resize-pane -t 2 -y 15
+tmux resize-pane -t 2 -y 20% 
+
 ## Set pane names
 tmux select-pane -t 0 -T "backend"
 tmux select-pane -t 1 -T "frontend"
