@@ -52,8 +52,7 @@ Tech:
 
 Prerequisites:
 - have `mise` installed
-- have the necessary requirements for a postgres DB
-  - You might need: `sudo apt install libpq-dev`
+- have a postgresql DB installed and running
 
 Steps:
 - `mise install` (might fail if you don't have system libs for postgres, but you can also decide to install it with another tool such as [postgresapp](https://postgresapp.com))
