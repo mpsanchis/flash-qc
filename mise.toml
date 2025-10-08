@@ -23,6 +23,7 @@ run = """
 #!/bin/bash
 cargo build
 cargo install --path tools/fqc --force
+pnpm i --frozen-lockfile
 pnpm --filter "flash-qc" build
 """
 
