@@ -7,6 +7,7 @@ import Layout from '../layouts/Layout.astro';
 		<h1>Flash QC</h1>
 	</header>
 	<main style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80vh; gap: 20px;">
+		<h3 id="backend-status" style="margin-top: 0;">Backend status: checking...</h3>
 		<div style="background: #f5f5f5; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
 			<h3 style="margin-top: 0;">Configuration</h3>
 			<div style="display: flex; gap: 15px; align-items: end;">
@@ -24,10 +25,10 @@ import Layout from '../layouts/Layout.astro';
 				<button id="submit-btn" style="padding: 8px 16px; background: #007acc; color: white; border: none; border-radius: 4px; cursor: pointer;">Submit</button>
 			</div>
 		</div>
-		<iframe 
+		<iframe
 			id="main-iframe"
-			src="/api/tags-html" 
-			width="800" 
+			src="/api/tags-html"
+			width="800"
 			height="600"
 			style="border: 1px solid #ccc;"
 		></iframe>
@@ -37,14 +38,27 @@ import Layout from '../layouts/Layout.astro';
 		document.getElementById('submit-btn').addEventListener('click', function() {
 			const user = document.getElementById('user-select').value;
 			const pluginId = document.getElementById('plugin-id').value;
-			
+
 			if (!pluginId.trim()) {
 				alert('Please enter a plugin ID');
 				return;
 			}
-			
-			const newUrl = `http://localhost:3000/user/${user}/plugin/${pluginId}`;
+
+			const newUrl = `/user/${user}/plugin/${pluginId}`;
 			document.getElementById('main-iframe').src = newUrl;
 		});
+
+		async function checkBackendStatus() {
+			const statusElement = document.getElementById('backend-status');
+			try {
+				const response = await fetch(`/api/system/health`);
+				statusElement.textContent = `Backend status: ${response.status} (${response.statusText})`
+			} catch (error) {
+				console.error('Error checking backend status:', error);
+				statusElement.textContent = 'Backend status: unavailable';
+			}
+		}
+
+		document.addEventListener('DOMContentLoaded', checkBackendStatus);
 	</script>
 </Layout>
