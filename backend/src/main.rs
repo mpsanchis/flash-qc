@@ -1,15 +1,20 @@
-mod models;
-mod routes;
-mod schema;
-
-use rocket::{launch, routes};
-use routes::index;
-
-use crate::routes::Cors;
-
+use rocket::{get, launch, routes};
 extern crate rocket;
+
+mod models;
+mod schema;
+mod system;
+
+
+#[get("/")]
+pub fn index() -> &'static str {
+  "Hello, world!"
+}
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().attach(Cors).mount("/", routes![index])
+    rocket::build()
+      .attach(system::Cors)
+      .mount("/", routes![index])
+      .mount("/system", system::routes())
 }

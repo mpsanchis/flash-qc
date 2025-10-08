@@ -1,7 +1,6 @@
 use rocket::Request;
 use rocket::Response;
 use rocket::fairing::{Fairing, Info, Kind};
-use rocket::get;
 use rocket::http::Header;
 
 pub struct Cors;
@@ -25,10 +24,3 @@ impl Fairing for Cors {
         response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
     }
 }
-
-#[get("/")]
-pub fn index() -> &'static str {
-    "Hello, world!"
-}
-
-//#[get("/flashcards/")]
