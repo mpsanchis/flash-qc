@@ -8,26 +8,9 @@ import Layout from '../layouts/Layout.astro';
 	</header>
 	<main style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80vh; gap: 20px;">
 		<h3 id="backend-status" style="margin-top: 0;">Backend status: checking...</h3>
-		<div style="background: #f5f5f5; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
-			<h3 style="margin-top: 0;">Configuration</h3>
-			<div style="display: flex; gap: 15px; align-items: end;">
-				<div>
-					<label for="user-select" style="display: block; margin-bottom: 5px; font-weight: bold;">User:</label>
-					<select id="user-select" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
-						<option value="joao">Joao</option>
-						<option value="ale">Ale</option>
-					</select>
-				</div>
-				<div>
-					<label for="plugin-id" style="display: block; margin-bottom: 5px; font-weight: bold;">Plugin ID:</label>
-					<input type="text" id="plugin-id" placeholder="Enter plugin ID" style="padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 150px;">
-				</div>
-				<button id="submit-btn" style="padding: 8px 16px; background: #007acc; color: white; border: none; border-radius: 4px; cursor: pointer;">Submit</button>
-			</div>
-		</div>
 		<iframe
 			id="main-iframe"
-			src="/api/tags-html"
+			src="/api/main-frame"
 			width="800"
 			height="600"
 			style="border: 1px solid #ccc;"
@@ -35,19 +18,6 @@ import Layout from '../layouts/Layout.astro';
 	</main>
 
 	<script>
-		document.getElementById('submit-btn').addEventListener('click', function() {
-			const user = document.getElementById('user-select').value;
-			const pluginId = document.getElementById('plugin-id').value;
-
-			if (!pluginId.trim()) {
-				alert('Please enter a plugin ID');
-				return;
-			}
-
-			const newUrl = `/user/${user}/plugin/${pluginId}`;
-			document.getElementById('main-iframe').src = newUrl;
-		});
-
 		async function checkBackendStatus() {
 			const statusElement = document.getElementById('backend-status');
 			try {
