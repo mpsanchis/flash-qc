@@ -1,14 +1,11 @@
-mod models;
-mod routes;
-mod schema;
-
 use models::{Deck, FlashcardInstance, FlashcardTemplate};
-use rocket::{launch, routes};
-use routes::index;
-
-use crate::routes::Cors;
-
+use rocket::launch;
 extern crate rocket;
+
+mod models;
+mod schema;
+mod system;
+mod root;
 
 #[launch]
 fn rocket() -> _ {
@@ -36,5 +33,8 @@ fn rocket() -> _ {
     println!("Template: {:?}", template);
     println!("Instance: {:?}", instance);
 
-    rocket::build().attach(Cors).mount("/", routes![index])
+    rocket::build()
+      .attach(system::Cors)
+      .mount("/", root::routes())
+      .mount("/system", system::routes())
 }
