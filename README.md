@@ -53,6 +53,9 @@ Tech:
 Prerequisites:
 - have `mise` installed
 - have a postgresql DB installed and running
+- have system libraries prerequisites of diesel
+  - have `libpq` (typically installed with postgresql) available in your `LIBRARY_PATH`
+    - for MacOS: comes with `libpq` (or `postgres@17`) if installed with homebrew, but is not in the default brew library path (`/opt/homebrew/lib`) unless `brew link --force libpq` is run. Even in that case, extending LIBRARY_PATH with `export LIBRARY_PATH="/opt/homebrew/lib:$LIBRARY_PATH"` is needed.
 
 Steps:
 - `mise install` (might fail if you don't have system libs for postgres, but you can also decide to install it with another tool such as [postgresapp](https://postgresapp.com))
@@ -85,7 +88,7 @@ The following is a possible architecture for the plugin system.
 
 The plugins can be public or private. Public plugins are usable for anyone, private plugins have an user or a set of users asociated with them. The plugin is uploaded to a git repository by its creators. From our perspective, the plugin is stored as a table row with an id and a link for its repository.
 
-Each card template can be rendered with one or more plugins. That can be configured at the card type, which defines which fields does the card possess.  
+Each card template can be rendered with one or more plugins. That can be configured at the card type, which defines which fields does the card possess.
 
 Each plugin has a yaml file or something similar which describes its functionality (think of Github/lab Actions repositories). For it to be a plugin, it has to be HTML/CSS/JS or WebAssembly. If it is build with any other tool, the result must be compiled to HTML/CSS/JS or WebAssembly (e.g. NextJs static compilation).
 
@@ -95,14 +98,14 @@ The plugin renders inside an iFrame and it obtains cards through a postMessage A
 
 - The plugin renders a card.
 - The plugin request a new card to flash-qc.
-- The plugin informs of success-failure, or % of success to flash-qc. 
+- The plugin informs of success-failure, or % of success to flash-qc.
 - The plugin has a mechanism to determine success-failure with a card. This can be as simple as a set of buttons Anki style or automatic evaluation
 - The plugin renders the forms or closest equivalent to add/edit/remove cards.
 
 
 ### The responsabilities of the flash-qc front are the following:
 
-- Generate some sort of container where the plugin is rendered. This could be the WASM VM, or an HTML iFrame. 
+- Generate some sort of container where the plugin is rendered. This could be the WASM VM, or an HTML iFrame.
 - Disponibilize a postMessage API to communicate with the iFrame and behave as an HTTP client for the flash-qc backend server.
 - Visual interface for user creation, edits and deletion of user data.
 - Inspecting other user profiles
