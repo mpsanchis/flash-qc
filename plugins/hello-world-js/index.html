@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello World Flashcard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="flashcard-container">
+    <div class="flashcard" tabindex="0" role="button" aria-label="Flashcard: Click to flip">
+      <div class="flashcard-face flashcard-front">
+        <div class="flashcard-content">Hello</div>
+        <div class="flashcard-hint">Click to flip</div>
+      </div>
+      <div class="flashcard-face flashcard-back">
+        <div class="flashcard-content">World</div>
+        <div class="flashcard-hint">Click to flip back</div>
+      </div>
+    </div>
+    <button id="memorized-btn" class="memorized-button">Memorized ✓</button>
+  </div>
+
+  <script src="dist/flashcard.js"></script>
+  <script>
+    // Handle "Memorized" button click
+    document.getElementById('memorized-btn').addEventListener('click', function() {
+      // Send postMessage to parent window
+      if (window.parent !== window) {
+        window.parent.postMessage({ type: 'memorized' }, '*');
+      }
+    });
+
+    // Listen for background color change from parent
+    window.addEventListener('message', function(event) {
+      if (event.data && event.data.type === 'changeBackgroundColor') {
+        document.body.style.background = event.data.color;
+        console.log('Changed background to:', event.data.color);
+      }
+    });
+  </script>
+</body>
+
+</html>
