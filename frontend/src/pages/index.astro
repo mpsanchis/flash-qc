@@ -9,9 +9,12 @@ import Layout from "../layouts/Layout.astro";
 	<main
 		style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80vh; gap: 20px;"
 	>
-		<h3 id="backend-status" style="margin-top: 0;">
-			Backend status: checking...
-		</h3>
+		<div style="display: flex; gap: 20px; align-items: center;">
+			<h3 id="backend-status" style="margin: 0;">
+				Backend status: checking...
+			</h3>
+			<h3 id="active-plugin" style="margin: 0;">Plugin: --</h3>
+		</div>
 		<div style="display: flex; gap: 10px; margin-bottom: 10px;">
 			<button
 				id="color-btn"
@@ -29,7 +32,12 @@ import Layout from "../layouts/Layout.astro";
 	</main>
 
 	<script>
-		const plugins = ["hello-world-js", "dummy", "da-vinci-facts"]; // List of available plugins
+		const plugins = [
+			"hello-world-js",
+			"dummy",
+			"da-vinci-facts",
+			"drawing-canvas",
+		]; // List of available plugins
 		let currentPluginIndex = 0;
 
 		const colors = ["red", "green", "blue", "yellow"];
@@ -52,6 +60,8 @@ import Layout from "../layouts/Layout.astro";
 			const iframe = document.getElementById("main-iframe");
 			const pluginName = plugins[index];
 			iframe.src = `/api/plugin/${pluginName}`;
+			document.getElementById("active-plugin").textContent =
+				`Plugin: ${pluginName} (${index + 1}/${plugins.length})`;
 			console.log(`Loaded plugin: ${pluginName}`);
 		}
 

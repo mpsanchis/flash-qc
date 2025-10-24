@@ -58,13 +58,47 @@ echo "Pre-commit hooks installed successfully!"
 run = """
 #!/bin/bash
 cargo build
+mise run build-plugins
 cargo install --path tools/fqc --force
 pnpm i --frozen-lockfile
 pnpm -r run build
 """
 
+[tasks.build-plugins]
+run = """
+#!/bin/bash
+set -e
+
+echo "Building WASM plugins..."
+
+# Find all plugin directories with cdylib crate type
+PLUGIN_DIRS=$(cargo metadata --format-version 1 --no-deps | \
+  jq -r '.packages[] | select(.manifest_path | contains("plugins")) | select(.targets[0].crate_types[] == "cdylib") | .manifest_path | split("/") | .[:-1] | join("/")')
+
+if [ -z "$PLUGIN_DIRS" ]; then
+  echo "No WASM plugins found"
+  exit 0
+fi
+
+# Build each plugin
+for PLUGIN_DIR in $PLUGIN_DIRS; do
+  echo "Building plugin in $PLUGIN_DIR..."
+  cd "$PLUGIN_DIR"
+  npm run build
+  cd - > /dev/null
+done
+
+echo "All WASM plugins built successfully!"
+"""
+
 [tasks.dserve]
-run = ["docker compose up --build --force-recreate -d"]
+run = """
+#!/bin/bash
+if [ -z "$SKIP_PLUGINS" ]; then
+  mise run build-plugins
+fi
+docker compose up --build --force-recreate -d
+"""
 
 [tasks.serve]
 # TO DO: move script to fqc CLI

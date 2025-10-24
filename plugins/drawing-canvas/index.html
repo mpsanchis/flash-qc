@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawing Canvas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="drawing-canvas"></canvas>
+    <div class="controls">
+        <button id="done-btn">Memorized ✓</button>
+    </div>
+
+    <script type="module">
+        import init, { DrawingCanvas } from './pkg/drawing_canvas.js';
+
+        async function run() {
+            // Initialize WASM module
+            await init();
+
+            // Set up canvas size
+            const canvas = document.getElementById('drawing-canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            // Create drawing canvas instance
+            const drawingCanvas = new DrawingCanvas('drawing-canvas');
+            drawingCanvas.setup_event_listeners();
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+
+            // Handle "Memorized" button - send memorized event to host
+            document.getElementById('done-btn').addEventListener('click', () => {
+                window.parent.postMessage({ type: 'memorized' }, '*');
+            });
+
+            // Listen for messages from host (e.g., background color changes)
+            window.addEventListener('message', (event) => {
+                if (event.data && event.data.type === 'changeBackgroundColor') {
+                    document.body.style.background = event.data.color;
+                }
+            });
+        }
+
+        run();
+    </script>
+</body>
+</html>

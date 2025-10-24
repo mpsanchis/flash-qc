@@ -1,0 +1,10 @@
+{
+  "name": "drawing-canvas",
+  "version": "0.1.0",
+  "description": "A WASM-powered drawing canvas plugin",
+  "type": "module",
+  "scripts": {
+    "build": "wasm-pack build --target web",
+    "watch": "wasm-pack build --target web --watch"
+  }
+}
