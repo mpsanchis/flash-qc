@@ -9,6 +9,6 @@ updates:
     schedule:
       interval: daily
   - package-ecosystem: npm
-    directory: /frontend
+    directory: /
     schedule:
       interval: daily
