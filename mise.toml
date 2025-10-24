@@ -28,17 +28,35 @@ pnpm --filter "flash-qc" build
 """
 
 [tasks.dserve]
-run = [
-  "docker compose up --build --force-recreate -d"
-]
+run = ["docker compose up --build --force-recreate -d"]
 
 [tasks.serve]
 # TO DO: move script to fqc CLI
-run = [ "./tools/scripts/serve.sh" ]
+run = ["./tools/scripts/serve.sh"]
 
 [tasks.stop]
 # TO DO: move script to fqc CLI
-run = [ "tmux kill-session -t flashqc" ]
+run = ["tmux kill-session -t flashqc"]
+
+[tasks.ci-astro]
+run = """
+#!/bin/bash
+pnpm install --frozen-lockfile
+pnpm --filter "flash-qc" exec astro check
+pnpm --filter "flash-qc" build
+"""
+
+[tasks.ci-rust]
+run = """
+#!/bin/bash
+export RUSTFLAGS="-Dwarnings"
+cargo build
+cargo test
+cargo clippy --all-targets --all-features
+"""
+
+[tasks.ci]
+depends = ["ci-astro", "ci-rust"]
 
 [env]
 DATABASE_URL = 'postgres://flashqc:1234@localhost/flashqc'
