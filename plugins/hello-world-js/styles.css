@@ -1,0 +1,159 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+    Cantarell, sans-serif;
+  padding: 20px;
+}
+
+.flashcard-container {
+  perspective: 1000px;
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.flashcard {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border-radius: 20px;
+}
+
+.flashcard:hover {
+  transform: scale(1.02);
+}
+
+.flashcard.flipped {
+  transform: rotateY(180deg);
+}
+
+.flashcard.flipped:hover {
+  transform: rotateY(180deg) scale(1.02);
+}
+
+.flashcard-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  padding: 40px;
+  text-align: center;
+}
+
+.flashcard-front {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+  color: #2c3e50;
+}
+
+.flashcard-back {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: #ffffff;
+  transform: rotateY(180deg);
+}
+
+.flashcard-content {
+  font-size: 4rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-in;
+}
+
+.flashcard-back .flashcard-content {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.flashcard-hint {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  opacity: 0.6;
+  font-style: italic;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Accessibility improvements */
+.flashcard:focus {
+  outline: 3px solid #667eea;
+  outline-offset: 4px;
+}
+
+.flashcard:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.memorized-button {
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.memorized-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.memorized-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .flashcard {
+    height: 250px;
+  }
+
+  .flashcard-content {
+    font-size: 3rem;
+  }
+
+  .flashcard-hint {
+    font-size: 0.8rem;
+  }
+
+  .memorized-button {
+    padding: 12px 24px;
+    font-size: 1rem;
+  }
+}

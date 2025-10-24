@@ -1,13 +1,11 @@
 use rocket::http::Status;
-use rocket::{get, routes as rocket_routes, Route};
+use rocket::{Route, get, routes as rocket_routes};
 
 #[get("/health")]
 fn health() -> Status {
-  Status::Ok
+    Status::Ok
 }
 
 pub fn routes() -> Vec<Route> {
-  rocket_routes![
-    health,
-  ]
+    rocket_routes![health,]
 }
