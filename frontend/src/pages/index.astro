@@ -1,34 +1,39 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout>
 	<header>
 		<h1>Flash QC</h1>
 	</header>
-	<main style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80vh; gap: 20px;">
-		<h3 id="backend-status" style="margin-top: 0;">Backend status: checking...</h3>
+	<main
+		style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80vh; gap: 20px;"
+	>
+		<h3 id="backend-status" style="margin-top: 0;">
+			Backend status: checking...
+		</h3>
 		<iframe
 			id="main-iframe"
 			src="/api/main-frame"
 			width="800"
 			height="600"
-			style="border: 1px solid #ccc;"
-		></iframe>
+			style="border: 1px solid #ccc;"></iframe>
 	</main>
 
 	<script>
 		async function checkBackendStatus() {
-			const statusElement = document.getElementById('backend-status');
+			const statusElement = document.getElementById("backend-status");
+			if (!statusElement) return;
+
 			try {
 				const response = await fetch(`/api/system/health`);
-				statusElement.textContent = `Backend status: ${response.status} (${response.statusText})`
+				statusElement.textContent = `Backend status: ${response.status} (${response.statusText})`;
 			} catch (error) {
-				console.error('Error checking backend status:', error);
-				statusElement.textContent = 'Backend status: unavailable';
+				console.error("Error checking backend status:", error);
+				statusElement.textContent = "Backend status: unavailable";
 			}
 		}
 
-		document.addEventListener('DOMContentLoaded', checkBackendStatus);
+		document.addEventListener("DOMContentLoaded", checkBackendStatus);
 	</script>
 </Layout>
