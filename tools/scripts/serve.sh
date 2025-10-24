@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Build WASM plugins before starting servers
+if [ -z "$SKIP_PLUGINS" ]; then
+  echo "Building WASM plugins..."
+  mise run build-plugins
+else
+  echo "Skipping WASM plugins build (SKIP_PLUGINS is set)"
+fi
+
 # SESSION CREATION
 SESSION_NAME="flashqc"
 ## Kill existing session if it exists
