@@ -46,6 +46,7 @@ docker compose down
 run = """
 #!/bin/bash
 pnpm install --frozen-lockfile
+pnpm --filter "flash-qc" exec astro check
 pnpm --filter "flash-qc" build
 """
 
@@ -53,6 +54,8 @@ pnpm --filter "flash-qc" build
 run = """
 #!/bin/bash
 export RUSTFLAGS="-Dwarnings"
+cargo build
+cargo test
 cargo clippy --all-targets --all-features
 """
 
