@@ -8,6 +8,11 @@ import Layout from '../layouts/Layout.astro';
 	</header>
 	<main style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80vh; gap: 20px;">
 		<h3 id="backend-status" style="margin-top: 0;">Backend status: checking...</h3>
+		<div style="display: flex; gap: 10px; margin-bottom: 10px;">
+			<button id="color-btn" style="padding: 10px 20px; font-size: 1rem; cursor: pointer; background: #667eea; color: white; border: none; border-radius: 8px; font-weight: 600;">
+				Change Background Color
+			</button>
+		</div>
 		<iframe
 			id="main-iframe"
 			src="/api/main-frame"
@@ -18,6 +23,12 @@ import Layout from '../layouts/Layout.astro';
 	</main>
 
 	<script>
+		const plugins = ['hello-world-js', 'dummy', 'da-vinci-facts']; // List of available plugins
+		let currentPluginIndex = 0;
+
+		const colors = ['red', 'green', 'blue', 'yellow'];
+		let currentColorIndex = 0;
+
 		async function checkBackendStatus() {
 			const statusElement = document.getElementById('backend-status');
 			try {
@@ -29,6 +40,48 @@ import Layout from '../layouts/Layout.astro';
 			}
 		}
 
-		document.addEventListener('DOMContentLoaded', checkBackendStatus);
+		function loadPlugin(index) {
+			const iframe = document.getElementById('main-iframe');
+			const pluginName = plugins[index];
+			iframe.src = `/api/plugin/${pluginName}`;
+			console.log(`Loaded plugin: ${pluginName}`);
+		}
+
+		function nextPlugin() {
+			currentPluginIndex = (currentPluginIndex + 1) % plugins.length;
+			loadPlugin(currentPluginIndex);
+		}
+
+		function changeBackgroundColor() {
+			currentColorIndex = (currentColorIndex + 1) % colors.length;
+			const color = colors[currentColorIndex];
+			const iframe = document.getElementById('main-iframe');
+
+			// Send postMessage to iframe to change background color
+			iframe.contentWindow.postMessage({
+				type: 'changeBackgroundColor',
+				color: color
+			}, '*');
+
+			console.log(`Changed background color to: ${color}`);
+		}
+
+		// Listen for postMessage from iframe
+		window.addEventListener('message', function(event) {
+			console.log('Received message from plugin:', event.data);
+
+			if (event.data && event.data.type === 'memorized') {
+				console.log('User marked card as memorized, cycling to next plugin...');
+				nextPlugin();
+			}
+		});
+
+		document.addEventListener('DOMContentLoaded', () => {
+			checkBackendStatus();
+			loadPlugin(currentPluginIndex);
+
+			// Add click handler for color button
+			document.getElementById('color-btn').addEventListener('click', changeBackgroundColor);
+		});
 	</script>
 </Layout>
