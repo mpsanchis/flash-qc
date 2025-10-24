@@ -1,15 +1,22 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout>
 	<header>
 		<h1>Flash QC</h1>
 	</header>
-	<main style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80vh; gap: 20px;">
-		<h3 id="backend-status" style="margin-top: 0;">Backend status: checking...</h3>
+	<main
+		style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80vh; gap: 20px;"
+	>
+		<h3 id="backend-status" style="margin-top: 0;">
+			Backend status: checking...
+		</h3>
 		<div style="display: flex; gap: 10px; margin-bottom: 10px;">
-			<button id="color-btn" style="padding: 10px 20px; font-size: 1rem; cursor: pointer; background: #667eea; color: white; border: none; border-radius: 8px; font-weight: 600;">
+			<button
+				id="color-btn"
+				style="padding: 10px 20px; font-size: 1rem; cursor: pointer; background: #667eea; color: white; border: none; border-radius: 8px; font-weight: 600;"
+			>
 				Change Background Color
 			</button>
 		</div>
@@ -18,30 +25,31 @@ import Layout from '../layouts/Layout.astro';
 			src="/api/main-frame"
 			width="800"
 			height="600"
-			style="border: 1px solid #ccc;"
-		></iframe>
+			style="border: 1px solid #ccc;"></iframe>
 	</main>
 
 	<script>
-		const plugins = ['hello-world-js', 'dummy', 'da-vinci-facts']; // List of available plugins
+		const plugins = ["hello-world-js", "dummy", "da-vinci-facts"]; // List of available plugins
 		let currentPluginIndex = 0;
 
-		const colors = ['red', 'green', 'blue', 'yellow'];
+		const colors = ["red", "green", "blue", "yellow"];
 		let currentColorIndex = 0;
 
 		async function checkBackendStatus() {
-			const statusElement = document.getElementById('backend-status');
+			const statusElement = document.getElementById("backend-status");
+			if (!statusElement) return;
+
 			try {
 				const response = await fetch(`/api/system/health`);
-				statusElement.textContent = `Backend status: ${response.status} (${response.statusText})`
+				statusElement.textContent = `Backend status: ${response.status} (${response.statusText})`;
 			} catch (error) {
-				console.error('Error checking backend status:', error);
-				statusElement.textContent = 'Backend status: unavailable';
+				console.error("Error checking backend status:", error);
+				statusElement.textContent = "Backend status: unavailable";
 			}
 		}
 
 		function loadPlugin(index) {
-			const iframe = document.getElementById('main-iframe');
+			const iframe = document.getElementById("main-iframe");
 			const pluginName = plugins[index];
 			iframe.src = `/api/plugin/${pluginName}`;
 			console.log(`Loaded plugin: ${pluginName}`);
@@ -55,33 +63,40 @@ import Layout from '../layouts/Layout.astro';
 		function changeBackgroundColor() {
 			currentColorIndex = (currentColorIndex + 1) % colors.length;
 			const color = colors[currentColorIndex];
-			const iframe = document.getElementById('main-iframe');
+			const iframe = document.getElementById("main-iframe");
 
 			// Send postMessage to iframe to change background color
-			iframe.contentWindow.postMessage({
-				type: 'changeBackgroundColor',
-				color: color
-			}, '*');
+			iframe.contentWindow.postMessage(
+				{
+					type: "changeBackgroundColor",
+					color: color,
+				},
+				"*",
+			);
 
 			console.log(`Changed background color to: ${color}`);
 		}
 
 		// Listen for postMessage from iframe
-		window.addEventListener('message', function(event) {
-			console.log('Received message from plugin:', event.data);
+		window.addEventListener("message", function (event) {
+			console.log("Received message from plugin:", event.data);
 
-			if (event.data && event.data.type === 'memorized') {
-				console.log('User marked card as memorized, cycling to next plugin...');
+			if (event.data && event.data.type === "memorized") {
+				console.log(
+					"User marked card as memorized, cycling to next plugin...",
+				);
 				nextPlugin();
 			}
 		});
 
-		document.addEventListener('DOMContentLoaded', () => {
+		document.addEventListener("DOMContentLoaded", () => {
 			checkBackendStatus();
 			loadPlugin(currentPluginIndex);
 
 			// Add click handler for color button
-			document.getElementById('color-btn').addEventListener('click', changeBackgroundColor);
+			document
+				.getElementById("color-btn")
+				.addEventListener("click", changeBackgroundColor);
 		});
 	</script>
 </Layout>
