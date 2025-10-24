@@ -5,4 +5,4 @@ indent_offset = 2
 indent_sequence = 4
 line_length = 120
 quote_representation = '"'
-sequence_style = "flow_style"
+sequence_style = "block_style"

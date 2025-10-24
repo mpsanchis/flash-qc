@@ -1,10 +1,11 @@
 use postgres::{Client, NoTls};
-use std::time::Duration;
 use std::env;
+use std::time::Duration;
 
 pub fn check_db() -> Result<(), String> {
     println!("Setting up your DB...");
-    let db_url = env::var("DATABASE_URL").expect("Please set up env var DATABASE_URL. Have you installed 'mise'?");
+    let db_url = env::var("DATABASE_URL")
+        .expect("Please set up env var DATABASE_URL. Have you installed 'mise'?");
     if let Ok(mut client) = Client::connect(&db_url, NoTls) {
         if let Ok(()) = client.is_valid(Duration::from_secs(1)) {
             println!("Your DB is already correctly configured for user flashqc");
@@ -37,7 +38,9 @@ pub fn check_db() -> Result<(), String> {
             .map_err(|e| format!("{:?}", e))?;
 
         println!("Correctly created database flashqc");
-        return Ok(())
+        return Ok(());
     }
-    Err(String::from("Could not connect to your local postgres DB in any way. Make sure you have one up and running"))
+    Err(String::from(
+        "Could not connect to your local postgres DB in any way. Make sure you have one up and running",
+    ))
 }

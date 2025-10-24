@@ -1,9 +1,9 @@
 FROM rust:1.89 AS builder
 
 WORKDIR /app
-COPY Cargo.toml ./
-COPY Cargo.lock* ./
-COPY src ./src
+COPY backend/Cargo.toml ./
+COPY backend/Cargo.lock* ./
+COPY backend/src ./src
 
 RUN cargo build --release
 
@@ -16,7 +16,8 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 COPY --from=builder /app/target/release/flashqc-backend /app/flashqc-backend
-COPY Rocket.toml /app/Rocket.toml
+COPY backend/Rocket.toml /app/Rocket.toml
+COPY plugins /app/plugins
 
 EXPOSE 8000
 
