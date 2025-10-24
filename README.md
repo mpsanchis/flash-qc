@@ -57,6 +57,7 @@ Prerequisites:
 - have system libraries prerequisites of diesel
   - have `libpq` (typically installed with postgresql) available in your `LIBRARY_PATH`
     - for MacOS: comes with `libpq` (or `postgres@17`) if installed with homebrew, but is not in the default brew library path (`/opt/homebrew/lib`) unless `brew link --force libpq` is run. Even in that case, extending LIBRARY_PATH with `export LIBRARY_PATH="/opt/homebrew/lib:$LIBRARY_PATH"` is needed.
+- install `wasm-pack` with `cargo install wasm-pack` (for plugin development)
 
 Steps:
 
