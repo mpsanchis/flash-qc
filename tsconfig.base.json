@@ -1,0 +1,21 @@
+{
+      "compilerOptions": {
+          "allowImportingTsExtensions": false,
+          "composite": true,
+          "declaration": true,
+          "declarationMap": true,
+          "module": "ESNext",
+          "moduleResolution": "Bundler",
+          "noEmit": false,
+          "noEmitOnError": true,
+          "noFallthroughCasesInSwitch": true,
+          "noImplicitOverride": true,
+          "noImplicitReturns": true,
+          "noUnusedLocals": true,
+          "resolveJsonModule": true,
+          "skipLibCheck": true,
+          "sourceMap": true,
+          "strict": true,
+          "target": "ESNext"
+      }
+}
