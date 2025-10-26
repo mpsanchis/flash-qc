@@ -1,5 +1,5 @@
 {
-  "name": "hello-world-js",
+  "name": "@flash-qc/plugin-hello-world-js",
   "version": "1.0.0",
   "description": "A simple animated flashcard plugin that flips between Hello and World",
   "type": "module",
@@ -8,6 +8,6 @@
     "watch": "tsc --watch"
   },
   "devDependencies": {
-    "typescript": "^5.9.2"
+    "typescript": "5.9.2"
   }
 }

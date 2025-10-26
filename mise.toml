@@ -24,7 +24,7 @@ run = """
 cargo build
 cargo install --path tools/fqc --force
 pnpm i --frozen-lockfile
-pnpm --filter "flash-qc" build
+pnpm -r run build
 """
 
 [tasks.dserve]
