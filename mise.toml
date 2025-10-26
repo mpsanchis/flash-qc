@@ -28,17 +28,19 @@ pnpm --filter "flash-qc" build
 """
 
 [tasks.dserve]
-run = [
-  "docker compose up --build --force-recreate -d"
-]
+run = ["docker compose up --build --force-recreate -d"]
 
 [tasks.serve]
 # TO DO: move script to fqc CLI
-run = [ "./tools/scripts/serve.sh" ]
+run = ["./tools/scripts/serve.sh"]
 
 [tasks.stop]
 # TO DO: move script to fqc CLI
-run = [ "tmux kill-session -t flashqc" ]
+run = """
+#!/bin/bash
+tmux kill-session -t flashqc
+docker compose down
+"""
 
 [env]
 DATABASE_URL = 'postgres://flashqc:1234@localhost/flashqc'
