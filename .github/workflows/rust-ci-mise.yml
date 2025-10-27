@@ -3,14 +3,14 @@ on:
   push:
     branches:
       - main
-    paths: &rust_paths
-      - '**/*.rs'
-      - '**/Cargo.toml'
-      - '**/Cargo.lock'
-      - '**/build.rs'
-      - .cargo/**
+    # paths: &rust_paths
+    #   - '**/*.rs'
+    #   - '**/Cargo.toml'
+    #   - '**/Cargo.lock'
+    #   - '**/build.rs'
+    #   - .cargo/**
   pull_request:
-    paths: *rust_paths
+    # paths: *rust_paths
 jobs:
   rust_check:
     runs-on: ubuntu-latest

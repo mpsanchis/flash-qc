@@ -3,10 +3,10 @@ on:
   push:
     branches:
       - main
-    paths: &astro_paths
-      - frontend/**
+    # paths: &astro_paths
+    # - frontend/**
   pull_request:
-    paths: *astro_paths
+    # paths: *astro_paths
 jobs:
   astro_check:
     runs-on: ubuntu-latest
