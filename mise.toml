@@ -46,7 +46,8 @@ docker compose down
 run = """
 #!/bin/bash
 pnpm install --frozen-lockfile
-pnpm --filter "flash-qc" build
+pnpm --filter "@flash-qc/frontend" exec astro check
+pnpm -r run build
 """
 
 [tasks.ci-rust]
