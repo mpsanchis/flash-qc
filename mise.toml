@@ -8,6 +8,7 @@ uv = '0.8.14'
 [tasks.bootstrap]
 run = """
 #!/bin/bash
+set -e
 WORKSPACE_ROOT=$PWD
 
 cargo install --path tools/fqc --force
@@ -21,6 +22,7 @@ diesel migration run
 [tasks.build]
 run = """
 #!/bin/bash
+set -e
 cargo build
 cargo install --path tools/fqc --force
 pnpm i --frozen-lockfile
@@ -38,6 +40,7 @@ run = ["./tools/scripts/serve.sh"]
 # TO DO: move script to fqc CLI
 run = """
 #!/bin/bash
+set -e
 tmux kill-session -t flashqc
 docker compose down
 """
@@ -58,6 +61,7 @@ pnpm --filter "@flash-qc/frontend" run build
 [tasks.ci-rust]
 run = """
 #!/bin/bash
+set -e
 rustup component add clippy rustfmt
 export RUSTFLAGS="-Dwarnings"
 cargo clippy --all-targets --all-features
