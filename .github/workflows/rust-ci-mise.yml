@@ -1,0 +1,22 @@
+name: Rust CI (mise)
+on:
+  push:
+    branches:
+      - main
+    paths: &rust_paths
+      - '**/*.rs'
+      - '**/Cargo.toml'
+      - '**/Cargo.lock'
+      - '**/build.rs'
+      - .cargo/**
+  pull_request:
+    paths: *rust_paths
+jobs:
+  rust_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup mise
+        uses: jdx/mise-action@v3
+      - name: Run Rust CI
+        run: mise ci-rust
