@@ -1,17 +1,17 @@
 {
-    "name": "@flash-qc/root",
-    "private": true,
-    "version": "0.0.0",
-    "scripts": {
-        "build": "tsc --build"
-    },
-    "devDependencies": {
-        "@astrojs/react": "4.4.2",
-        "@types/react": "19.2.7",
-        "@types/react-dom": "19.2.3",
-        "astro": "5.16.0",
-        "react": "19.2.0",
-        "react-dom": "19.2.0",
-        "typescript": "5.9.3"
-    }
+  "name": "@flash-qc/root",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "devDependencies": {
+    "@astrojs/react": "4.4.2",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "astro": "5.16.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "typescript": "5.9.3"
+  }
 }

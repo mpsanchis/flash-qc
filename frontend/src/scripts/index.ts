@@ -23,7 +23,9 @@ async function loadPlugin() {
   const iframe = document.getElementById("main-iframe") as HTMLIFrameElement;
   if (!iframe) return;
 
-  const cardId = (window as any).currentPluginCardIds[(window as any).currentCardIndex];
+  const cardId = (window as any).currentPluginCardIds[
+    (window as any).currentCardIndex
+  ];
   const pluginName = await getPluginName(cardId);
   iframe.src = `/api/plugin/${pluginName}?cardId=${cardId}`;
   const activePluginEl = document.getElementById("active-plugin");

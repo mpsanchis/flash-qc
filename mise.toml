@@ -53,7 +53,7 @@ run = "diesel database reset --migration-dir backend/migrations"
 [tasks.dserve]
 run = [
   "[ -z $FQC_SKIP_BUILD ] && mise run build",
-  "docker compose up --build --force-recreate -d"
+  "docker compose up --build --force-recreate -d",
 ]
 
 [tasks.serve]
