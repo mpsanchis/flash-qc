@@ -1,12 +1,12 @@
 // >>> Mandatory part: contract to satisfy by plugin
 // Generates "cardId" and "getCardData", which are used to fetch card data
 const urlParams = new URLSearchParams(window.location.search);
-const cardId = urlParams.get('cardId');
+const cardId = urlParams.get("cardId");
 
 async function getCardData() {
-    const response = await fetch(`/api/cards/${cardId}`);
-    const { plugin_data } = await response.json();
-    return plugin_data;
+  const response = await fetch(`/api/cards/${cardId}`);
+  const { plugin_data } = await response.json();
+  return plugin_data;
 }
 // <<< Mandatory part: contract to satisfy by plugin
 
@@ -17,7 +17,11 @@ class Flashcard {
   private card: HTMLElement;
   private isFlipped: boolean = false;
 
-  constructor(cardElement: HTMLElement, frontContent: string, backContent: string) {
+  constructor(
+    cardElement: HTMLElement,
+    frontContent: string,
+    backContent: string,
+  ) {
     this.card = cardElement;
     this.init(frontContent, backContent);
   }
@@ -26,8 +30,12 @@ class Flashcard {
    * Initialize the flashcard with event listeners
    */
   private init(frontContent: string, backContent: string): void {
-    const frontContentEl = this.card.querySelector('.flashcard-front .flashcard-content');
-    const backContentEl = this.card.querySelector('.flashcard-back .flashcard-content');
+    const frontContentEl = this.card.querySelector(
+      ".flashcard-front .flashcard-content",
+    );
+    const backContentEl = this.card.querySelector(
+      ".flashcard-back .flashcard-content",
+    );
 
     if (frontContentEl) frontContentEl.textContent = frontContent;
     if (backContentEl) backContentEl.textContent = backContent;
@@ -77,10 +85,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const cardElement = document.querySelector(".flashcard") as HTMLElement;
 
   if (cardElement) {
-    const {
-        frontContent,
-        backContent
-    } = await getCardData();
+    const { frontContent, backContent } = await getCardData();
     const flashcard = new Flashcard(cardElement, frontContent, backContent);
 
     // Expose to window for debugging/testing if needed

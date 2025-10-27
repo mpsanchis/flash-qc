@@ -7,3 +7,7 @@ exclude_rules = L016
 # You can also configure indentation, capitalization, etc.
 [sqlfluff:rules:capitalisation.keywords]  # capitalisation of keywords
 capitalisation_policy = upper
+
+[sqlfluff:rules:references.keywords]
+# Ignore non-reserved PostgreSQL keywords
+ignore_words = name
