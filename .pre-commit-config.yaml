@@ -8,13 +8,15 @@ repos:
         name: rustfmt (Rust)
         entry: rustfmt --edition 2024
         language: system
-        types: [rust]
+        types:
+          - rust
         require_serial: true
       - id: clippy
         name: clippy (Rust)
         entry: bash -c 'RUSTFLAGS="-Dwarnings" cargo clippy --all-targets --all-features'
         language: system
-        types: [rust]
+        types:
+          - rust
         pass_filenames: false
 
   # --- Prettier: Astro / YAML / JSON / JSONC / (optionally) CSS ---
@@ -22,10 +24,13 @@ repos:
     hooks:
       - id: prettier
         name: prettier (Astro/JSON/JSONC/etc.)
-        entry: bash -lc 'npx prettier --ignore-unknown --write "$@"'
-        language: system
+        entry: pnpm exec prettier --ignore-unknown --write
+        language: node
         pass_filenames: true
         files: \.(astro|json|jsonc|css|scss|js|jsx|ts|tsx)$
+        additional_dependencies:
+          - prettier@3.6.2
+          - prettier-plugin-astro@0.14.1
 
   # --- Markdown: markdownlint-cli with auto-fix ---
   - repo: https://github.com/igorshubovych/markdownlint-cli
@@ -36,7 +41,8 @@ repos:
         description: Fixes the style of Markdown/Commonmark files.
         entry: markdownlint --fix
         language: node
-        types: [markdown]
+        types:
+          - markdown
         minimum_pre_commit_version: 0.15.0
 
   # --- TOML: Taplo formatter ---
@@ -56,12 +62,14 @@ repos:
         name: sqlfluff lint (Postgres)
         entry: sqlfluff lint --dialect postgres
         language: python
-        types: [sql]
+        types:
+          - sql
       - id: sqlfluff-fix
         name: sqlfluff fix (Postgres)
         entry: sqlfluff fix --dialect postgres
         language: python
-        types: [sql]
+        types:
+          - sql
 
   # --- YAML Formatting ---
   - repo: https://github.com/lyz-code/yamlfix
