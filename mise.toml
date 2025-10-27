@@ -52,8 +52,10 @@ pnpm --filter "flash-qc" build
 [tasks.ci-rust]
 run = """
 #!/bin/bash
+rustup component add clippy rustfmt
 export RUSTFLAGS="-Dwarnings"
 cargo clippy --all-targets --all-features
+cargo fmt -- --check
 """
 
 [tasks.ci]
