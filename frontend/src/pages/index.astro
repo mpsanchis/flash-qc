@@ -58,10 +58,13 @@ import Layout from '../layouts/Layout.astro';
 			const iframe = document.getElementById('main-iframe');
 
 			// Send postMessage to iframe to change background color
-			iframe.contentWindow.postMessage({
-				type: 'changeBackgroundColor',
-				color: color
-			}, '*');
+			iframe.contentWindow.postMessage(
+				{
+					type: "changeBackgroundColor",
+					color: color,
+				}, 
+				window.location.origin,
+			);
 
 			console.log(`Changed background color to: ${color}`);
 		}

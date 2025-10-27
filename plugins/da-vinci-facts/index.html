@@ -134,7 +134,7 @@
     document.getElementById('memorized-btn').addEventListener('click', function() {
       // Send postMessage to parent window
       if (window.parent !== window) {
-        window.parent.postMessage({ type: 'memorized' }, '*');
+        window.parent.postMessage({ type: 'memorized' }, window.location.origin);
       }
     });
 
