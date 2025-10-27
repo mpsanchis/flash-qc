@@ -13,21 +13,22 @@ repos:
         require_serial: true
       - id: clippy
         name: clippy (Rust)
-        entry: cargo clippy --all-targets --all-features
+        entry: bash -c 'RUSTFLAGS="-Dwarnings" cargo clippy --all-targets --all-features'
         language: system
         types:
           - rust
         pass_filenames: false
-        env:
-          RUSTFLAGS: -Dwarnings
 
   # --- Prettier: Astro / YAML / JSON / JSONC / (optionally) CSS ---
   - repo: local
     hooks:
       - id: prettier
         name: prettier (Astro/JSON/JSONC/etc.)
-        entry: npx prettier --ignore-unknown --write
-        language: system
+        entry: pnpm exec prettier --ignore-unknown --write
+        language: node
+        additional_dependencies:
+          - prettier@3.6.2
+          - prettier-plugin-astro@0.14.1
         pass_filenames: true
         files: \.(astro|json|jsonc|css|scss|js|jsx|ts|tsx)$
 
@@ -55,7 +56,7 @@ repos:
 
   # --- SQL Linting & Formatting (Postgres) ---
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 3.4.2  # check for the latest release tag
+    rev: 3.5.0  # check for the latest release tag
     hooks:
       - id: sqlfluff-lint
         name: sqlfluff lint (Postgres)
