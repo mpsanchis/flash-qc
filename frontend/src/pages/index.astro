@@ -71,7 +71,7 @@ import Layout from "../layouts/Layout.astro";
 					type: "changeBackgroundColor",
 					color: color,
 				},
-				"*",
+				window.location.origin,
 			);
 
 			console.log(`Changed background color to: ${color}`);
