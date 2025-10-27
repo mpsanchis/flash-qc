@@ -1,8 +1,13 @@
 name: Astro CI
 on:
   push:
-    branches: [main]
-    paths: &astro_paths [frontend/**]
+    branches:
+      - main
+    paths: &astro_paths
+      - frontend/**
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
   pull_request:
     paths: *astro_paths
 jobs:
@@ -22,5 +27,7 @@ jobs:
           cache-dependency-path: ./pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Build Astro
-        run: pnpm --filter "flash-qc" build
+      - name: Check Astro
+        run: pnpm --filter "@flash-qc/frontend" exec astro check
+      - name: Build
+        run: pnpm -r run build

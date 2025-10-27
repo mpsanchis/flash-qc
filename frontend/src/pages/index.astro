@@ -31,6 +31,7 @@ import Layout from '../layouts/Layout.astro';
 
 		async function checkBackendStatus() {
 			const statusElement = document.getElementById('backend-status');
+			if (!statusElement) return;
 			try {
 				const response = await fetch(`/api/system/health`);
 				statusElement.textContent = `Backend status: ${response.status} (${response.statusText})`
@@ -40,8 +41,9 @@ import Layout from '../layouts/Layout.astro';
 			}
 		}
 
-		function loadPlugin(index) {
-			const iframe = document.getElementById('main-iframe');
+		function loadPlugin(index: number) {
+			const iframe = document.getElementById('main-iframe') as HTMLIFrameElement | null;
+			if (!iframe) return;
 			const pluginName = plugins[index];
 			iframe.src = `/api/plugin/${pluginName}`;
 			console.log(`Loaded plugin: ${pluginName}`);
@@ -55,7 +57,8 @@ import Layout from '../layouts/Layout.astro';
 		function changeBackgroundColor() {
 			currentColorIndex = (currentColorIndex + 1) % colors.length;
 			const color = colors[currentColorIndex];
-			const iframe = document.getElementById('main-iframe');
+			const iframe = document.getElementById('main-iframe') as HTMLIFrameElement | null;
+			if (!iframe?.contentWindow) return;
 
 			// Send postMessage to iframe to change background color
 			iframe.contentWindow.postMessage({
@@ -81,7 +84,10 @@ import Layout from '../layouts/Layout.astro';
 			loadPlugin(currentPluginIndex);
 
 			// Add click handler for color button
-			document.getElementById('color-btn').addEventListener('click', changeBackgroundColor);
+			const colorBtn = document.getElementById('color-btn');
+			if (colorBtn) {
+				colorBtn.addEventListener('click', changeBackgroundColor);
+			}
 		});
 	</script>
 </Layout>
