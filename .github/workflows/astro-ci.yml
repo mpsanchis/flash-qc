@@ -22,5 +22,7 @@ jobs:
           cache-dependency-path: ./pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Astro Check
+        run: pnpm --filter "flash-qc" exec astro check
       - name: Build Astro
         run: pnpm --filter "flash-qc" build

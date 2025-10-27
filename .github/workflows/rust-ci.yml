@@ -9,9 +9,13 @@ on:
 env:
   RUSTFLAGS: -Dwarnings
 jobs:
-  clippy_check:
+  rust_check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - name: Build
+        run: cargo build
+      - name: Run Tests
+        run: cargo test
       - name: Run Clippy
         run: cargo clippy --workspace --all-targets --all-features
