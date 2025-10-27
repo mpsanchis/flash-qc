@@ -1,8 +1,10 @@
 name: Astro CI
 on:
   push:
-    branches: [main]
-    paths: &astro_paths [frontend/**]
+    branches:
+      - main
+    paths: &astro_paths
+      - frontend/**
   pull_request:
     paths: *astro_paths
 jobs:
