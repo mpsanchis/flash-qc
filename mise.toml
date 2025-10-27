@@ -45,10 +45,13 @@ docker compose down
 [tasks.ci-astro]
 run = """
 #!/bin/bash
+set -e  # Exit on any error
 pnpm install --frozen-lockfile
 # Type checking
+echo "Running Astro type check..."
 pnpm --filter "@flash-qc/frontend" exec astro check
 # Build
+echo "Building Astro project..."
 pnpm --filter "@flash-qc/frontend" run build
 """
 

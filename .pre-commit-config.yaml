@@ -31,6 +31,12 @@ repos:
           - prettier-plugin-astro@0.14.1
         pass_filenames: true
         files: \.(astro|json|jsonc|css|scss|js|jsx|ts|tsx)$
+      - id: astro-check
+        name: astro check (TypeScript)
+        entry: bash -c 'cd frontend && pnpm exec astro check'
+        language: system
+        files: \.(astro|ts|tsx)$
+        pass_filenames: false
 
   # --- Markdown: markdownlint-cli with auto-fix ---
   - repo: https://github.com/igorshubovych/markdownlint-cli
