@@ -1,0 +1,37 @@
+**/node_modules
+node_modules
+.pnpm-store
+pnpm-lock.yaml
+
+# Frontend
+frontend/node_modules
+frontend/dist
+frontend/.astro
+
+# Plugins
+plugins/**/node_modules
+
+# Rust
+target
+**/target
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+
+# Misc
+*.log
+.DS_Store
+
+# Documentation
+docs
+README.md
+TODO.md
+
+# POCs
+pocs
+diesel-poc
