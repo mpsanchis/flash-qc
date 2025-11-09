@@ -17,7 +17,7 @@ fn is_valid_plugin_name(name: &str) -> bool {
     !name.is_empty()
         && name
             .chars()
-            .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit())
+            .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
 }
 
 #[get("/main-frame")]
