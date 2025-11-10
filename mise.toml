@@ -148,7 +148,7 @@ echo "Formatting Astro/JSON/JSONC/CSS files with prettier..."
 npx --yes --package=prettier@3.6.2 --package=prettier-plugin-astro@0.14.1 \
   -- prettier --ignore-unknown --write '**/*.{astro,json,jsonc,css,scss,js,jsx,ts,tsx}'
 
-# Markdown: markdownlint with auto-fix
+# Markdown: markdownlint with auto-fix (allow failures to continue formatting other files)
 echo "Formatting Markdown files with markdownlint..."
 npx --yes --package=markdownlint-cli \
   -- markdownlint --fix '**/*.md' || true
@@ -157,11 +157,11 @@ npx --yes --package=markdownlint-cli \
 echo "Formatting TOML files with taplo..."
 uvx taplo format
 
-# SQL: sqlfluff fix
+# SQL: sqlfluff fix (allow failures to continue formatting other files)
 echo "Formatting SQL files with sqlfluff..."
 uvx sqlfluff fix --dialect postgres || true
 
-# YAML: yamlfix
+# YAML: yamlfix (allow failures to continue formatting other files)
 echo "Formatting YAML files with yamlfix..."
 uvx yamlfix . || true
 
@@ -185,7 +185,7 @@ echo "Checking Astro/JSON/JSONC/CSS files with prettier..."
 npx --yes --package=prettier@3.6.2 --package=prettier-plugin-astro@0.14.1 \
   -- prettier --ignore-unknown --check '**/*.{astro,json,jsonc,css,scss,js,jsx,ts,tsx}'
 
-# Markdown: markdownlint
+# Markdown: markdownlint (allow failures to continue checking other files)
 echo "Linting Markdown files with markdownlint..."
 npx --yes --package=markdownlint-cli \
   -- markdownlint '**/*.md' || true
@@ -194,7 +194,7 @@ npx --yes --package=markdownlint-cli \
 echo "Linting TOML files with taplo..."
 uvx taplo lint
 
-# SQL: sqlfluff lint
+# SQL: sqlfluff lint (allow failures to continue checking other files)
 echo "Linting SQL files with sqlfluff..."
 uvx sqlfluff lint --dialect postgres || true
 
