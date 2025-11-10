@@ -7,6 +7,8 @@ const plugins = [
 	"drawing-canvas",
 ]; // List of available plugins
 let currentPluginIndex = 0;
+let currentTimeoutCallbackHandler: NodeJS.Timeout | null = null;
+const PLUGIN_TIMEOUT_MS = 20000;
 
 const colors = ["red", "green", "blue", "yellow"];
 let currentColorIndex = 0;
@@ -35,10 +37,18 @@ function loadPlugin(index: number) {
 			plugins.length
 		})`;
 	}
+
+	currentTimeoutCallbackHandler = setTimeout(() => {
+      nextPlugin();
+	}, PLUGIN_TIMEOUT_MS);
 	console.log(`Loaded plugin: ${pluginName}`);
 }
 
 function nextPlugin() {
+    if (currentTimeoutCallbackHandler !== null) {
+        clearTimeout(currentTimeoutCallbackHandler);
+        currentTimeoutCallbackHandler = null;
+    }
 	currentPluginIndex = (currentPluginIndex + 1) % plugins.length;
 	loadPlugin(currentPluginIndex);
 }
@@ -68,10 +78,9 @@ window.addEventListener("message", function (event) {
 	}
 
 	const eventData = parseEventData(event.data);
+	console.log(`Received message from plugin: ${JSON.stringify(eventData)}`);
 
-	console.log("Received message from plugin:", event.data);
-
-	if (eventData && eventData.type === "finish") {
+	if (eventData && eventData.hasFinished()) {
 		console.log(
 			"User marked card as memorized, cycling to next plugin...",
 		);
