@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 chrono = "0.4.41"
-diesel = {version = "2.2.0", features = ["postgres", "uuid", "serde_json"]}
+diesel = {version = "2.3.3", features = ["postgres", "uuid", "serde_json"]}
 dotenvy = "0.15.7"
 rocket = "0.5.1"
 serde = {version="1.0.219", features=["derive"]}
