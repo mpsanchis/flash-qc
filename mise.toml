@@ -8,6 +8,7 @@ uv = '0.8.14'
 [tasks.bootstrap]
 run = """
 #!/bin/bash
+set -e
 WORKSPACE_ROOT=$PWD
 
 cargo install --path tools/fqc --force
@@ -15,43 +16,7 @@ fqc bootstrap
 cargo install diesel_cli --no-default-features --features postgres
 
 cd $WORKSPACE_ROOT/backend/
-diesel migration run
-"""
-
-[tasks.setup-hooks]
-run = """
-#!/bin/bash
-set -e
-
-echo "Setting up pre-commit hooks..."
-
-# Check if uvx is available
-if command -v uvx &> /dev/null; then
-  echo "Using uvx to install pre-commit..."
-  uvx pre-commit install
-elif command -v python &> /dev/null || command -v python3 &> /dev/null; then
-  echo "Using Python to install pre-commit..."
-  PYTHON_CMD=$(command -v python3 || command -v python)
-
-  # Ask for confirmation before installing
-  read -p "pre-commit is not installed. Install it using pip? (y/N) " -n 1 -r
-  echo
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    # Install pre-commit using pip
-    $PYTHON_CMD -m pip install --user pre-commit
-
-    # Install the git hook
-    $PYTHON_CMD -m pre-commit install
-  else
-    echo "Skipping pre-commit installation."
-    exit 1
-  fi
-else
-  echo "Error: Neither uvx nor Python is available. Please install one of them."
-  exit 1
-fi
-
-echo "Pre-commit hooks installed successfully!"
+diesel database reset
 """
 
 [tasks.build]
