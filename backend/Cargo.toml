@@ -4,13 +4,13 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-chrono = "0.4.41"
-diesel = {version = "2.3.3", features = ["postgres", "uuid", "serde_json"]}
+chrono = "0.4.42"
+diesel = { version = "2.3.3", features = ["postgres", "uuid", "serde_json"] }
 # For diesel: build libpq and openssl as part of the build process
-pq-sys = { version = "0.6", features = ["bundled"] }
-openssl-sys = { version = "0.9.100", features = ["vendored"] }
+pq-sys = { version = "0.7", features = ["bundled"] }
+openssl-sys = { version = "0.9.111", features = ["vendored"] }
 dotenvy = "0.15.7"
 rocket = "0.5.1"
-serde = {version="1.0.219", features=["derive"]}
-serde_json = "1.0.143"
-uuid = "1.18.0"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
+uuid = "1.18.1"
