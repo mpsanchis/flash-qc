@@ -27,17 +27,11 @@ pub fn check_db() -> Result<(), String> {
             .is_empty()
         {
             client
-                .batch_execute("CREATE ROLE flashqc WITH LOGIN PASSWORD '1234'")
+                .batch_execute("CREATE USER flashqc WITH LOGIN PASSWORD '1234' CREATEDB")
                 .map_err(|e| format!("{:?}", e))?;
 
             println!("Correctly created user flashqc");
         }
-
-        client
-            .batch_execute("CREATE DATABASE flashqc")
-            .map_err(|e| format!("{:?}", e))?;
-
-        println!("Correctly created database flashqc");
         return Ok(());
     }
     Err(String::from(
