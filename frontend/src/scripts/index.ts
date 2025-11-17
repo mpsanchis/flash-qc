@@ -1,7 +1,5 @@
 import { parseEventData } from "../models/plugin-message";
 
-const plugins = ["hello-world-js", "dummy", "da-vinci-facts", "drawing-canvas"]; // List of available plugins
-let currentPluginIndex = 0;
 let currentTimeoutCallbackHandler: NodeJS.Timeout | null = null;
 const PLUGIN_TIMEOUT_MS = 20000;
 
@@ -13,7 +11,7 @@ async function checkBackendStatus() {
   if (!statusElement) return;
 
   try {
-    const response = await fetch(`/api/system/health`);
+    const response = await fetch("/api/system/health");
     statusElement.textContent = `Backend status: ${response.status} (${response.statusText})`;
   } catch (error) {
     console.error("Error checking backend status:", error);
@@ -21,15 +19,18 @@ async function checkBackendStatus() {
   }
 }
 
-function loadPlugin(index: number) {
+function loadPlugin() {
   const iframe = document.getElementById("main-iframe") as HTMLIFrameElement;
   if (!iframe) return;
-  const pluginName = plugins[index];
+
+  const pluginName = (window as any).currentPluginCards[
+    (window as any).currentCardIndex
+  ];
   iframe.src = `/api/plugin/${pluginName}`;
   const activePluginEl = document.getElementById("active-plugin");
   if (activePluginEl) {
-    activePluginEl.textContent = `Plugin: ${pluginName} (${index + 1}/${
-      plugins.length
+    activePluginEl.textContent = `Plugin: ${pluginName} (${(window as any).currentCardIndex + 1}/${
+      (window as any).currentPluginCards.length
     })`;
   }
 
@@ -44,8 +45,10 @@ function nextPlugin() {
     clearTimeout(currentTimeoutCallbackHandler);
     currentTimeoutCallbackHandler = null;
   }
-  currentPluginIndex = (currentPluginIndex + 1) % plugins.length;
-  loadPlugin(currentPluginIndex);
+  (window as any).currentCardIndex =
+    ((window as any).currentCardIndex + 1) %
+    (window as any).currentPluginCards.length;
+  loadPlugin();
 }
 
 function changeBackgroundColor() {
@@ -66,6 +69,55 @@ function changeBackgroundColor() {
   console.log(`Changed background color to: ${color}`);
 }
 
+async function loadDecks() {
+  const dropdown = document.getElementById(
+    "decks-dropdown",
+  ) as HTMLSelectElement;
+
+  try {
+    const response = await fetch("/api/decks");
+    const decks = await response.json();
+
+    dropdown.innerHTML = '<option value="">Select a deck...</option>';
+
+    decks.forEach((deck: any) => {
+      const option = document.createElement("option");
+      option.value = deck.id;
+      option.textContent = deck.name;
+      dropdown.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Failed to load decks:", error);
+    dropdown.innerHTML = '<option value="">Error loading decks</option>';
+  }
+}
+
+async function loadDeckCards(deckId: string) {
+  try {
+    const response = await fetch(`/api/decks/${deckId}`);
+    const pluginCards = await response.json();
+
+    // Store cards in window so iframe can access them
+    (window as any).currentPluginCards = pluginCards.cards.map(
+      (c: any) => c.name,
+    );
+    (window as any).currentCardIndex = 0;
+
+    loadPlugin();
+  } catch (error) {
+    console.error("Failed to load deck cards:", error);
+  }
+}
+
+// Handle deck selection
+const dropdown = document.getElementById("decks-dropdown") as HTMLSelectElement;
+dropdown.addEventListener("change", (e) => {
+  const deckId = (e.target as HTMLSelectElement).value;
+  if (deckId) {
+    loadDeckCards(deckId);
+  }
+});
+
 // Listen for postMessage from iframe
 window.addEventListener("message", function (event) {
   if (event.origin !== window.location.origin) {
@@ -83,7 +135,8 @@ window.addEventListener("message", function (event) {
 
 document.addEventListener("DOMContentLoaded", () => {
   checkBackendStatus();
-  loadPlugin(currentPluginIndex);
+  loadDecks();
+  loadPlugin();
 
   // Add click handler for color button
   document

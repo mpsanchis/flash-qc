@@ -1,61 +1,11 @@
--- Your SQL goes here
-CREATE TABLE IF NOT EXISTS plugin(
-  ID SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
-  http_address TEXT,
-  tag TEXT
+CREATE TABLE IF NOT EXISTS deck (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "user"(
-  ID SERIAL PRIMARY KEY,
-  username TEXT NOT NULL UNIQUE,
-  email TEXT NOT NULL UNIQUE,
-  password_hash TEXT NOT NULL
+-- Weird name "plugincard" on purpose, until we split plugins from cards (see: https://github.com/mpsanchis/flash-qc/milestone/3)
+CREATE TABLE IF NOT EXISTS plugincard (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    deck_id INTEGER NOT NULL REFERENCES deck (id)
 );
-
-CREATE TABLE IF NOT EXISTS deck(
-  ID SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
-  description TEXT,
-  deleted BOOLEAN NOT NULL DEFAULT FALSE,
-  plugin_id INTEGER REFERENCES plugin(ID)
-);
-
-CREATE TABLE IF NOT EXISTS flashcard_template (
-  ID SERIAL PRIMARY KEY,
-  field_types JSONB NOT NULL,
-  deleted BOOLEAN NOT NULL DEFAULT FALSE
-);
-
-COMMENT ON COLUMN flashcard_template.field_types IS 'A JSONB object where keys are field names and values are field types (e.g., "text", "image", etc.)';
-
-CREATE TABLE IF NOT EXISTS flashcard_template_plugin (
-  template_id INTEGER NOT NULL REFERENCES flashcard_template(ID),
-  plugin_id INTEGER NOT NULL REFERENCES plugin(ID),
-  PRIMARY KEY (template_id, plugin_id)
-);
-
-COMMENT ON TABLE flashcard_template_plugin IS 'Associates flashcard templates with plugins that can render or process them';
-
-CREATE TABLE IF NOT EXISTS flashcard (
-  ID SERIAL ,
-  VERSION INTEGER NOT NULL DEFAULT 1,
-  template_id INTEGER NOT NULL REFERENCES flashcard_template(ID),
-  deleted BOOLEAN NOT NULL DEFAULT FALSE,
-  fields JSONB NOT NULL,
-  PRIMARY KEY (ID, VERSION)
-);
-
-COMMENT ON COLUMN flashcard.VERSION IS 'Incremented each time the flashcard is updated';
-
-CREATE TABLE IF NOT EXISTS flashcard_metadata (
-  id_user INTEGER NOT NULL REFERENCES "user"(ID),
-  id_flashcard INTEGER NOT NULL,
-  version_flashcard INTEGER NOT NULL,
-  score INTEGER NOT NULL DEFAULT 0,
-  PRIMARY KEY (id_user, id_flashcard, version_flashcard),
-  FOREIGN KEY (id_flashcard, version_flashcard) REFERENCES flashcard(ID, VERSION)
-);
-
-COMMENT ON COLUMN flashcard_metadata.score IS 'This is a simplified score for now. If minor details on a card are changed, a copy of the last flashcard_metada is created';
-
