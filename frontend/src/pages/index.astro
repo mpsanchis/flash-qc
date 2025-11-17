@@ -24,6 +24,15 @@ import Layout from "../layouts/Layout.astro";
 				Change Background Color
 			</button>
 		</div>
+		<div style="display: flex; flex-direction: column; gap: 10px;">
+			<label for="decks-dropdown" style="font-weight: 600;">Select a Deck:</label>
+			<select
+				id="decks-dropdown"
+				style="padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; background: white;"
+			>
+				<option value="">Loading decks...</option>
+			</select>
+		</div>
 		<iframe
 			id="main-iframe"
 			src="/api/main-frame"

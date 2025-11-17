@@ -1,23 +1,20 @@
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Insertable, Deserialize, Serialize, Queryable)]
+#[derive(Debug, Insertable, Deserialize, Selectable, Serialize, Queryable)]
 #[diesel(table_name = crate::schema::deck)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Deck {
     pub id: i32,
     pub name: String,
-    pub description: Option<String>,
-    pub deleted: bool,
-    pub plugin_id: Option<i32>,
 }
 
-#[derive(Debug, Insertable, Deserialize, Serialize, Queryable)]
-#[diesel(table_name = crate::schema::flashcard)]
+#[derive(Associations, Debug, Deserialize, Insertable, Serialize, Queryable)]
+#[diesel(table_name = crate::schema::plugincard)]
+#[diesel(belongs_to(Deck))]
 #[diesel(check_for_backend(diesel::pg::Pg))]
-pub struct FlashcardInstance {
+pub struct PluginCard {
     pub id: i32,
-    pub template_id: i32,
-    pub deleted: bool,
-    pub fields: serde_json::Value,
+    pub name: String,
+    pub deck_id: i32,
 }
