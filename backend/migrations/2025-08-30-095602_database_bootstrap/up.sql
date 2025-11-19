@@ -3,9 +3,15 @@ CREATE TABLE IF NOT EXISTS deck (
     name TEXT NOT NULL
 );
 
--- Weird name "plugincard" on purpose, until we split plugins from cards (see: https://github.com/mpsanchis/flash-qc/milestone/3)
-CREATE TABLE IF NOT EXISTS plugincard (
+CREATE TABLE IF NOT EXISTS plugin (
     id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    deck_id INTEGER NOT NULL REFERENCES deck (id)
+    name TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS card (
+    id SERIAL PRIMARY KEY,
+    deck_id INTEGER NOT NULL REFERENCES deck (id),
+    plugin_id INTEGER NOT NULL REFERENCES plugin (id),
+    plugin_name TEXT NOT NULL,
+    plugin_data JSONB NOT NULL DEFAULT '{}'
 );
