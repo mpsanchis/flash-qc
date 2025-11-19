@@ -12,7 +12,7 @@ export function parseEventData(eventData: any): PluginMessage | null {
     type: "finish",
     hasFinished: () => true,
     reason: parseReason(eventData.reason),
-    statusCode: eventData.statusCode || 1,
+    statusCode: eventData.statusCode ?? 1,
   };
 }
 

@@ -100,55 +100,10 @@
   <div class="card">
     <h1>🎨 Leonardo da Vinci 🎨</h1>
     <p class="fact" id="fact-text">Loading...</p>
-    <button class="refresh-btn" id="refresh-btn">Show Another Fact</button>
   </div>
   <button id="memorized-btn" class="memorized-button">Memorized ✓</button>
 
-  <script>
-    const facts = [
-      "Leonardo da Vinci was born on April 15, 1452, in Vinci, Italy, as an illegitimate son of a notary.",
-      "He wrote his notes in mirror writing, from right to left, possibly because he was left-handed.",
-      "Da Vinci designed a helicopter, a tank, and a submarine centuries before they were actually built.",
-      "He was a vegetarian and reportedly bought caged birds just to set them free.",
-      "The Mona Lisa took him approximately 4 years to complete (1503-1507).",
-      "Da Vinci never signed or dated his most famous work, the Mona Lisa.",
-      "He dissected over 30 human corpses to study anatomy, which was illegal at the time.",
-      "Leonardo was ambidextrous and could draw with one hand while writing with the other simultaneously.",
-      "He never married and had no children, leaving his entire estate to his favorite pupil, Francesco Melzi.",
-      "Da Vinci's last words were reportedly: 'I have offended God and mankind because my work did not reach the quality it should have.'",
-      "He designed one of the first robots - a mechanical knight that could sit, stand, and move its arms.",
-      "Leonardo spent his last three years in France, invited by King Francis I, who became a close friend.",
-      "He could bend horseshoes with his bare hands, demonstrating remarkable physical strength.",
-      "Da Vinci invented an early version of contact lenses and theorized about how the eye works.",
-      "His notebooks contain over 13,000 pages of notes and drawings on science, art, and engineering."
-    ];
-
-    function showRandomFact() {
-      const randomIndex = Math.floor(Math.random() * facts.length);
-      document.getElementById('fact-text').textContent = facts[randomIndex];
-    }
-
-    document.getElementById('refresh-btn').addEventListener('click', showRandomFact);
-
-    // Handle "Memorized" button click
-    document.getElementById('memorized-btn').addEventListener('click', function() {
-      // Send postMessage to parent window
-      if (window.parent !== window) {
-        window.parent.postMessage({ type: 'memorized' }, window.location.origin);
-      }
-    });
-
-    // Listen for background color change from parent
-    window.addEventListener('message', function(event) {
-      if (event.data && event.data.type === 'changeBackgroundColor') {
-        document.body.style.background = event.data.color;
-        console.log('Changed background to:', event.data.color);
-      }
-    });
-
-    // Show initial fact
-    showRandomFact();
-  </script>
+  <script type="module" src="./da-vinci-facts-script.js"></script>
 </body>
 
 </html>
