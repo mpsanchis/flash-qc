@@ -19,18 +19,17 @@ async function checkBackendStatus() {
   }
 }
 
-function loadPlugin() {
+async function loadPlugin() {
   const iframe = document.getElementById("main-iframe") as HTMLIFrameElement;
   if (!iframe) return;
 
-  const pluginName = (window as any).currentPluginCards[
-    (window as any).currentCardIndex
-  ];
-  iframe.src = `/api/plugin/${pluginName}`;
+  const cardId = (window as any).currentPluginCardIds[(window as any).currentCardIndex];
+  const pluginName = await getPluginName(cardId);
+  iframe.src = `/api/plugin/${pluginName}?cardId=${cardId}`;
   const activePluginEl = document.getElementById("active-plugin");
   if (activePluginEl) {
     activePluginEl.textContent = `Plugin: ${pluginName} (${(window as any).currentCardIndex + 1}/${
-      (window as any).currentPluginCards.length
+      (window as any).currentPluginCardIds.length
     })`;
   }
 
@@ -40,15 +39,21 @@ function loadPlugin() {
   console.log(`Loaded plugin: ${pluginName}`);
 }
 
-function nextPlugin() {
+async function getPluginName(cardId: number): Promise<string> {
+  const response = await fetch(`/api/cards/${cardId}`);
+  const { plugin_name } = await response.json();
+  return plugin_name;
+}
+
+async function nextPlugin() {
   if (currentTimeoutCallbackHandler !== null) {
     clearTimeout(currentTimeoutCallbackHandler);
     currentTimeoutCallbackHandler = null;
   }
   (window as any).currentCardIndex =
     ((window as any).currentCardIndex + 1) %
-    (window as any).currentPluginCards.length;
-  loadPlugin();
+    (window as any).currentPluginCardIds.length;
+  await loadPlugin();
 }
 
 function changeBackgroundColor() {
@@ -95,15 +100,13 @@ async function loadDecks() {
 async function loadDeckCards(deckId: string) {
   try {
     const response = await fetch(`/api/decks/${deckId}`);
-    const pluginCards = await response.json();
+    const deckWithCards = await response.json();
 
     // Store cards in window so iframe can access them
-    (window as any).currentPluginCards = pluginCards.cards.map(
-      (c: any) => c.name,
-    );
+    (window as any).currentPluginCardIds = deckWithCards.card_ids;
     (window as any).currentCardIndex = 0;
 
-    loadPlugin();
+    await loadPlugin();
   } catch (error) {
     console.error("Failed to load deck cards:", error);
   }
@@ -119,7 +122,7 @@ dropdown.addEventListener("change", (e) => {
 });
 
 // Listen for postMessage from iframe
-window.addEventListener("message", function (event) {
+window.addEventListener("message", async (event) => {
   if (event.origin !== window.location.origin) {
     return;
   }
@@ -129,14 +132,13 @@ window.addEventListener("message", function (event) {
 
   if (eventData && eventData.hasFinished()) {
     console.log("User marked card as memorized, cycling to next plugin...");
-    nextPlugin();
+    await nextPlugin();
   }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  checkBackendStatus();
-  loadDecks();
-  loadPlugin();
+document.addEventListener("DOMContentLoaded", async () => {
+  await checkBackendStatus();
+  await loadDecks();
 
   // Add click handler for color button
   document
