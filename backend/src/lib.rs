@@ -1,3 +1,4 @@
+pub mod card;
 pub mod deck;
 pub mod models;
 pub mod root;

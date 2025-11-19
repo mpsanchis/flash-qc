@@ -1,7 +1,7 @@
 use rocket::launch;
 extern crate rocket;
 
-use flashqc_backend::{deck, root, system};
+use flashqc_backend::{card, deck, root, system};
 
 #[launch]
 fn rocket() -> _ {
@@ -10,4 +10,5 @@ fn rocket() -> _ {
         .mount("/", root::routes())
         .mount("/system", system::routes())
         .mount("/decks", deck::routes())
+        .mount("/cards", card::routes())
 }
