@@ -1,15 +1,33 @@
 name: Rust CI
 on:
   push:
-    branches: [main]
-    paths: &rust_paths ['**/*.rs', '**/Cargo.toml', '**/Cargo.lock', '**/build.rs', .cargo/**]
+    branches:
+      - main
   pull_request:
-    paths: *rust_paths
 # Make sure CI fails on all warnings, including Clippy lints
 env:
   RUSTFLAGS: -Dwarnings
 jobs:
+  # Check if rust files changed
+  check-files:
+    runs-on: ubuntu-latest
+    outputs:
+      rust: ${{ steps.filter.outputs.rust }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            rust:
+              - '**/*.rs'
+              - '**/Cargo.toml'
+              - '**/Cargo.lock'
+              - '**/build.rs'
+              - '.cargo/**'
   rust_check:
+    needs: check-files
+    if: needs.check-files.outputs.rust == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
