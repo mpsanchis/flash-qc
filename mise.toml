@@ -111,3 +111,4 @@ echo "✓ All build artifacts cleaned successfully"
 
 [env]
 DATABASE_URL = 'postgres://flashqc:1234@localhost/flashqc'
+SALT = '12345678'
