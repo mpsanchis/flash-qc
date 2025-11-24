@@ -42,7 +42,7 @@ tmux select-pane -t "$PANE_2" -T "control"
 ## Serve backend and frontend
 tmux send-keys -t "$PANE_0" "cargo run" Enter
 tmux send-keys -t "$PANE_1" "pnpm --filter \"@flash-qc/frontend\" dev" Enter
-tmux send-keys -t "$PANE_2" "echo \"Use this panel to run any commands. Run 'mise stop' to exit. \"" Enter
+tmux send-keys -t "$PANE_2" "echo \"Use this panel to run any commands. Run 'mise run stop' to exit. \"" Enter
 
 # MOVE TO CONTROL AND ATTACH TO SESSION
 tmux select-pane -t "$PANE_2"

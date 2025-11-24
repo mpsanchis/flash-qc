@@ -20,50 +20,41 @@ diesel database reset
 """
 
 [tasks.build]
-run = """
-#!/bin/bash
-cargo build
-mise run build-plugins
-cargo install --path tools/fqc --force
-pnpm i --frozen-lockfile
-pnpm -r run build
-"""
+run = [
+  { "tasks" = [
+    "db-reset",
+    "build-cli",
+    "build-backend",
+    "build-frontend",
+    "build-plugins",
+  ] },
+]
+
+[tasks.build-cli]
+run = "cargo install --path=tools/fqc --force"
+
+[tasks.build-backend]
+run = "cargo build"
+
+[tasks.pnpm-install]
+run = "pnpm install --frozen-lockfile"
+
+[tasks.build-frontend]
+depends = ["pnpm-install"]
+run = "pnpm --filter 'frontend' run build"
 
 [tasks.build-plugins]
-run = """
-#!/bin/bash
-set -e
+depends = ["pnpm-install"]
+run = "pnpm --filter './plugins/*' run build"
 
-echo "Building WASM plugins..."
-
-# Find all plugin directories with cdylib crate type
-PLUGIN_DIRS=$(cargo metadata --format-version 1 --no-deps | \
-  jq -r '.packages[] | select(.manifest_path | contains("plugins")) | select(.targets[0].crate_types[] == "cdylib") | .manifest_path | split("/") | .[:-1] | join("/")')
-
-if [ -z "$PLUGIN_DIRS" ]; then
-  echo "No WASM plugins found"
-  exit 0
-fi
-
-# Build each plugin
-for PLUGIN_DIR in $PLUGIN_DIRS; do
-  echo "Building plugin in $PLUGIN_DIR..."
-  cd "$PLUGIN_DIR"
-  npm run build
-  cd - > /dev/null
-done
-
-echo "All WASM plugins built successfully!"
-"""
+[tasks.db-reset]
+run = "diesel database reset --migration-dir backend/migrations"
 
 [tasks.dserve]
-run = """
-#!/bin/bash
-if [ -z "$SKIP_PLUGINS" ]; then
-  mise run build-plugins
-fi
-docker compose up --build --force-recreate -d
-"""
+run = [
+  "[ -z $FQC_SKIP_BUILD ] && mise run build",
+  "docker compose up --build --force-recreate -d"
+]
 
 [tasks.serve]
 # TO DO: move script to fqc CLI

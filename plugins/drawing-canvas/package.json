@@ -1,5 +1,5 @@
 {
-  "name": "drawing-canvas",
+  "name": "@flash-qc/plugin-drawing-canvas",
   "version": "0.1.0",
   "description": "A WASM-powered drawing canvas plugin",
   "type": "module",
