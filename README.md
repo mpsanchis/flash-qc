@@ -62,15 +62,14 @@ Prerequisites:
 Steps:
 
 - `mise install` (might fail if you don't have system libs for postgres, but you can also decide to install it with another tool such as [postgresapp](https://postgresapp.com))
-- `mise bootstrap` (configures pre-commit hooks using uvx if available, or Python otherwise. Also ensures that DB is available with user flashqc)
+- `mise run bootstrap` (configures pre-commit hooks using uvx if available, or Python otherwise. Also ensures that DB is available with user flashqc)
 
 ### Daily development
 
 Steps:
 
-- `mise build`
-- `mise serve` (TODO)
-- `diesel database reset` (TODO: define when, and potentiall move to fqc)
+- `mise run build`
+- `mise run serve`
 
 ### Diesel commands
 

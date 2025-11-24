@@ -27,8 +27,4 @@ diesel::table! {
 diesel::joinable!(card -> deck (deck_id));
 diesel::joinable!(card -> plugin (plugin_id));
 
-diesel::allow_tables_to_appear_in_same_query!(
-    card,
-    deck,
-    plugin,
-);
+diesel::allow_tables_to_appear_in_same_query!(card, deck, plugin,);

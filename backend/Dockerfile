@@ -1,4 +1,4 @@
-FROM rust:1.89 AS builder
+FROM rust:1.89-trixie AS builder
 
 WORKDIR /app
 COPY backend/Cargo.toml ./
@@ -7,7 +7,7 @@ COPY backend/src ./src
 
 RUN cargo build --release
 
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 RUN apt-get update && apt-get install -y \
     ca-certificates \
