@@ -1,5 +1,5 @@
 {
-  "name": "@flash-qc/plugin-hello-world-js",
+  "name": "@flash-qc/plugin-flip-word",
   "version": "1.0.0",
   "description": "A simple animated flashcard plugin that flips between Hello and World",
   "type": "module",
