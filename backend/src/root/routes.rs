@@ -4,7 +4,7 @@ use rocket::{Route, get, routes as rocket_routes};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-const DEFAULT_PLUGIN: &str = "hello-world-js";
+const DEFAULT_PLUGIN: &str = "flip-word";
 
 #[get("/")]
 pub fn index() -> &'static str {

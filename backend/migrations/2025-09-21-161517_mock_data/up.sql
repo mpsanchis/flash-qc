@@ -4,7 +4,7 @@ INSERT INTO deck (id, name) VALUES
 -- (3, 'Arts & Crafts Deck');
 
 INSERT INTO plugin (id, name) VALUES
-(1, 'hello-world-js'),
+(1, 'flip-word'),
 (2, 'dummy'),
 (3, 'da-vinci-facts'),
 (4, 'drawing-canvas');
@@ -15,6 +15,6 @@ INSERT INTO card (id, deck_id, plugin_id, plugin_name, plugin_data) VALUES
 (3, 1, 3, 'da-vinci-facts', '{"fact": "Da Vinci lived in the city of Florence"}'),
 (4, 2, 2, 'dummy', '{ "word": "hello" }'),
 (5, 2, 2, 'dummy', '{ "word": "nonexistentword" }');
--- (1, 1, 'hello-world-js'),
+-- (1, 1, 'flip-word'),
 -- (2, 1, 'dummy'),
 -- (4, 2, 'drawing-canvas');

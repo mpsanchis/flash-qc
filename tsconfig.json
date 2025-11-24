@@ -5,7 +5,7 @@
             "path": "./frontend"
         },
         {
-            "path": "./plugins/hello-world-js"
+            "path": "./plugins/flip-word"
         }
     ]
 }
