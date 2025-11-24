@@ -72,27 +72,12 @@
 <body>
   <div class="content">
     <h1>Dummy Plugin</h1>
-    <p>This is a dummy plugin. It does nothing.</p>
+    <p>This is a dummy plugin. It does nothing other than display a word:</p>
+    <p id="word">Loading word...</p>
   </div>
   <button id="memorized-btn" class="memorized-button">Memorized ✓</button>
 
-  <script>
-    // Handle "Memorized" button click
-    document.getElementById('memorized-btn').addEventListener('click', function() {
-      // Send postMessage to parent window
-      if (window.parent !== window) {
-        window.parent.postMessage({ type: 'memorized' }, window.location.origin);
-      }
-    });
-
-    // Listen for background color change from parent
-    window.addEventListener('message', function(event) {
-      if (event.data && event.data.type === 'changeBackgroundColor') {
-        document.body.style.background = event.data.color;
-        console.log('Changed background to:', event.data.color);
-      }
-    });
-  </script>
+  <script type="module" src="./dummy-script.js"></script>
 </body>
 
 </html>
