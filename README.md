@@ -127,3 +127,15 @@ The plugin renders inside an iFrame and it obtains cards through a postMessage A
 - Generate statistics for users.
 - In the event of a new training session, the backend informs how many cards of each deck have to be evaluated by the user.
 - Manages all CRUD operations in general (Users, decks, cards, card templates, etc)
+
+## Development Tips
+
+To generate a User Hash manually:
+
+`argon2 12345678 -id -t 2 -k 19456 -p 1`
+
+Where 12345678 is the salt. After typing the password, press Control D to send EOF
+
+Curling a login:
+
+`curl -u "johndoe:password" -X POST http://127.0.0.1:8000/auth/login`

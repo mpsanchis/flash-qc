@@ -18,6 +18,15 @@ diesel::table! {
 }
 
 diesel::table! {
+    flashqc_user (id) {
+        id -> Int4,
+        username -> Text,
+        hashed_password -> Text,
+        email -> Text,
+    }
+}
+
+diesel::table! {
     plugin (id) {
         id -> Int4,
         name -> Text,
@@ -27,4 +36,4 @@ diesel::table! {
 diesel::joinable!(card -> deck (deck_id));
 diesel::joinable!(card -> plugin (plugin_id));
 
-diesel::allow_tables_to_appear_in_same_query!(card, deck, plugin,);
+diesel::allow_tables_to_appear_in_same_query!(card, deck, flashqc_user, plugin,);

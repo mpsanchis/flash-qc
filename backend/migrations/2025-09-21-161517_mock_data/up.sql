@@ -29,4 +29,4 @@ INSERT INTO card (id, deck_id, plugin_id, plugin_name, plugin_data) VALUES
 
 -- import user data
 INSERT INTO flashqc_user (id, username, hashed_password, email) VALUES
-(1, 'johndoe', '$argon2i$v=19$m=4096,t=3,p=1$MTIzNDU2Nzg$qz22mSNl6gMA17HqQkVLxGGZ23Tc8eAOIsRNVmIPjzE', 'myemail@com');
+(1, 'johndoe', '$argon2id$v=19$m=19456,t=2,p=1$MTIzNDU2Nzg$Zsmf7ZTiIiMUDRc6bF8sB2Xxyt1aG6hcw56qpR3xNJU', 'myemail@com');
