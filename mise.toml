@@ -90,3 +90,4 @@ depends = ["ci-astro", "ci-rust"]
 
 [env]
 DATABASE_URL = 'postgres://flashqc:1234@localhost/flashqc'
+SALT = '12345678'
