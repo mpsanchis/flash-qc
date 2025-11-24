@@ -14,7 +14,7 @@ jobs:
     outputs:
       rust: ${{ steps.filter.outputs.rust }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: dorny/paths-filter@v3
         id: filter
         with:
@@ -31,9 +31,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+      - name: Check formatting
+        run: cargo fmt --all -- --check
       - name: Build
-        run: cargo build
+        run: cargo build --all --all-targets
       - name: Run Tests
-        run: cargo test
+        run: cargo test --all
       - name: Run Clippy
-        run: cargo clippy --workspace --all-targets --all-features
+        run: cargo clippy --all --all-targets --all-features
