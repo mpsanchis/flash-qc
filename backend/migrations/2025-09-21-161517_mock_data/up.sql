@@ -26,3 +26,7 @@ INSERT INTO card (id, deck_id, plugin_id, plugin_name, plugin_data) VALUES
 (9, 4, 4, 'drawing-canvas', '{"imageName": "ferris.png"}'),
 (10, 4, 4, 'drawing-canvas', '{"imageName": "ferris-wizard.png"}'),
 (11, 4, 4, 'drawing-canvas', '{"imageName": "ferris-viking.png"}');
+
+-- import user data
+INSERT INTO flashqc_user (id, username, hashed_password, email) VALUES
+(1, 'johndoe', '$argon2i$v=19$m=4096,t=3,p=1$MTIzNDU2Nzg$qz22mSNl6gMA17HqQkVLxGGZ23Tc8eAOIsRNVmIPjzE', 'myemail@com');
