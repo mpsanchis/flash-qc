@@ -1,7 +1,8 @@
 INSERT INTO deck (id, name) VALUES
 (1, 'Da Vinci'),
 (2, 'Memorization Deck'),
-(3, 'Front & Back Deck');
+(3, 'Front & Back Deck'),
+(4, 'Drawing Canvas');
 
 INSERT INTO plugin (id, name) VALUES
 (1, 'flip-word'),
@@ -20,4 +21,8 @@ INSERT INTO card (id, deck_id, plugin_id, plugin_name, plugin_data) VALUES
 -- Front & Back Deck
 (6, 3, 1, 'flip-word', '{"frontContent": "hello", "backContent": "world"}'),
 (7, 3, 1, 'flip-word', '{"frontContent": "Tom", "backContent": "Jerry"}'),
-(8, 3, 1, 'flip-word', '{"frontContent": "Batman", "backContent": "Robin"}');
+(8, 3, 1, 'flip-word', '{"frontContent": "Batman", "backContent": "Robin"}'),
+-- Drawing Canvas
+(9, 4, 4, 'drawing-canvas', '{"imageName": "ferris.png"}'),
+(10, 4, 4, 'drawing-canvas', '{"imageName": "ferris-wizard.png"}'),
+(11, 4, 4, 'drawing-canvas', '{"imageName": "ferris-viking.png"}');
