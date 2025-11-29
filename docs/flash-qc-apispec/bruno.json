@@ -1,0 +1,6 @@
+{
+  "version": "1",
+  "name": "flash-qc",
+  "type": "collection",
+  "ignore": ["node_modules", ".git"]
+}
