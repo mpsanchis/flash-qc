@@ -88,5 +88,74 @@ cargo clippy --all-targets --all-features
 [tasks.ci]
 depends = ["ci-astro", "ci-rust"]
 
+[tasks.fmt]
+run = """
+#!/bin/bash
+set -e
+
+echo "Formatting all files..."
+
+# Rust: rustfmt
+echo "Formatting Rust files with rustfmt..."
+cargo fmt --all
+
+# Prettier: Astro/JSON/JSONC/CSS/etc
+echo "Formatting Astro/JSON/JSONC/CSS files with prettier..."
+npx --yes --package=prettier@3.6.2 --package=prettier-plugin-astro@0.14.1 \
+  -- prettier --ignore-unknown --write '**/*.{astro,json,jsonc,css,scss,js,jsx,ts,tsx}'
+
+# Markdown: markdownlint with auto-fix (allow failures to continue formatting other files)
+echo "Formatting Markdown files with markdownlint..."
+npx --yes --package=markdownlint-cli \
+  -- markdownlint --fix '**/*.md' || true
+
+# TOML: Taplo formatter
+echo "Formatting TOML files with taplo..."
+uvx taplo format
+
+# SQL: sqlfluff fix (allow failures to continue formatting other files)
+echo "Formatting SQL files with sqlfluff..."
+uvx sqlfluff fix --dialect postgres || true
+
+# YAML: yamlfix (allow failures to continue formatting other files)
+echo "Formatting YAML files with yamlfix..."
+uvx yamlfix . || true
+
+echo "All files formatted successfully!"
+"""
+
+[tasks.lint]
+run = """
+#!/bin/bash
+set -e
+
+echo "Linting all files..."
+
+# Rust: clippy
+echo "Linting Rust files with clippy..."
+export RUSTFLAGS="-Dwarnings"
+cargo clippy --all-targets --all-features
+
+# Prettier: check without writing
+echo "Checking Astro/JSON/JSONC/CSS files with prettier..."
+npx --yes --package=prettier@3.6.2 --package=prettier-plugin-astro@0.14.1 \
+  -- prettier --ignore-unknown --check '**/*.{astro,json,jsonc,css,scss,js,jsx,ts,tsx}'
+
+# Markdown: markdownlint (allow failures to continue checking other files)
+echo "Linting Markdown files with markdownlint..."
+npx --yes --package=markdownlint-cli \
+  -- markdownlint '**/*.md' || true
+
+# TOML: Taplo lint
+echo "Linting TOML files with taplo..."
+uvx taplo lint
+
+# SQL: sqlfluff lint (allow failures to continue checking other files)
+echo "Linting SQL files with sqlfluff..."
+uvx sqlfluff lint --dialect postgres || true
+
+echo "All files linted successfully!"
+"""
+
 [env]
 DATABASE_URL = 'postgres://flashqc:1234@localhost/flashqc'

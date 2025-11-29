@@ -71,6 +71,16 @@ Steps:
 - `mise run build`
 - `mise run serve`
 
+### Code Quality
+
+Format all files:
+
+- `mise fmt` - Runs all formatters (rustfmt, prettier, markdownlint, taplo, sqlfluff, yamlfix)
+
+Lint all files:
+
+- `mise lint` - Runs all linters (clippy, prettier check, markdownlint, taplo, sqlfluff)
+
 ### Diesel commands
 
 TODO: might be hidden by `fqc`, if we only need to
