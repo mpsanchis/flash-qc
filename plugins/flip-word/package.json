@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "typescript": "5.9.3"
