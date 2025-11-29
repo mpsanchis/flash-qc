@@ -51,10 +51,14 @@ run = "pnpm --filter './plugins/*' run build"
 run = "diesel database reset --migration-dir backend/migrations"
 
 [tasks.dserve]
-run = [
-  "[ -z $FQC_SKIP_BUILD ] && mise run build",
-  "docker compose up --build --force-recreate -d",
-]
+run = """
+#!/bin/bash
+set -e
+if [ -z "$FQC_SKIP_BUILD" ]; then
+  mise run build
+fi
+docker compose up --build --force-recreate -d
+"""
 
 [tasks.serve]
 # TO DO: move script to fqc CLI
