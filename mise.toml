@@ -88,5 +88,22 @@ cargo clippy --all-targets --all-features
 [tasks.ci]
 depends = ["ci-astro", "ci-rust"]
 
+[tasks.clean]
+run = """
+#!/bin/bash
+set -e
+echo "Cleaning all build artifacts..."
+
+# Clean Rust artifacts
+echo "Cleaning Rust build artifacts..."
+cargo clean
+
+# Clean Node/pnpm artifacts
+echo "Cleaning Node/pnpm build outputs and dependencies..."
+pnpm -r clean
+
+echo "✓ All build artifacts cleaned successfully"
+"""
+
 [env]
 DATABASE_URL = 'postgres://flashqc:1234@localhost/flashqc'

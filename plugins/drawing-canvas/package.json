@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "wasm-pack build --target web",
-    "watch": "wasm-pack build --target web --watch"
+    "watch": "wasm-pack build --target web --watch",
+    "clean": "rm -rf pkg"
   }
 }
