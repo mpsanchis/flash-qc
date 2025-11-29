@@ -28,5 +28,6 @@ INSERT INTO card (id, deck_id, plugin_id, plugin_name, plugin_data) VALUES
 (11, 4, 4, 'drawing-canvas', '{"imageName": "ferris-viking.png"}');
 
 -- import user data
+-- Password is "password" created manually with argon2
 INSERT INTO flashqc_user (id, username, hashed_password, email) VALUES
 (1, 'johndoe', '$argon2id$v=19$m=19456,t=2,p=1$MTIzNDU2Nzg$Zsmf7ZTiIiMUDRc6bF8sB2Xxyt1aG6hcw56qpR3xNJU', 'myemail@com');
