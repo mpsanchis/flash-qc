@@ -7,7 +7,6 @@ uv = '0.8.14'
 
 [tasks.bootstrap]
 run = """
-#!/bin/bash
 set -e
 WORKSPACE_ROOT=$PWD
 
@@ -50,6 +49,7 @@ run = "pnpm --filter './plugins/*' run build"
 [tasks.db-reset]
 run = "diesel database reset --migration-dir backend/migrations"
 
+
 [tasks.dserve]
 run = [
   "[ -z $FQC_SKIP_BUILD ] && mise run build",
@@ -63,14 +63,12 @@ run = ["./tools/scripts/serve.sh"]
 [tasks.stop]
 # TO DO: move script to fqc CLI
 run = """
-#!/bin/bash
 tmux kill-session -t flashqc
 docker compose down
 """
 
 [tasks.ci-astro]
 run = """
-#!/bin/bash
 pnpm install --frozen-lockfile
 pnpm --filter "flash-qc" exec astro check
 pnpm --filter "flash-qc" build
@@ -78,7 +76,6 @@ pnpm --filter "flash-qc" build
 
 [tasks.ci-rust]
 run = """
-#!/bin/bash
 export RUSTFLAGS="-Dwarnings"
 cargo build
 cargo test
