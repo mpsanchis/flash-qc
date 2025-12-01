@@ -5,7 +5,7 @@ edition = "2024"
 
 [dependencies]
 chrono = "0.4.42"
-diesel = { version = "2.3.3", features = ["postgres", "serde_json", "uuid"] }
+diesel = { version = "2.3.4", features = ["postgres", "serde_json", "uuid"] }
 # For diesel: build libpq and openssl as part of the build process
 pq-sys = { version = "0.7", features = ["bundled"] }
 openssl-sys = { version = "0.9.111", features = ["vendored"] }
