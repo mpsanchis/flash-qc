@@ -1,0 +1,7 @@
+* {
+  font-family: "Helvetica", sans-serif;
+}
+
+#deck-list li button {
+  margin-right: 25px;
+}

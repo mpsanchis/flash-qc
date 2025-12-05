@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import  "../styles/styles.css";
 
 ---
 
@@ -13,5 +14,11 @@ import Layout from "../layouts/Layout.astro";
   <main>
     <h1>Profile</h1>
     <p>Welcome to your profile page.</p>
+    <p>These are your decks:</p>
+    <ul id="deck-list"></ul>
   </main>
 </Layout>
+
+<script>
+   	import "../scripts/profile.ts";
+</script>
