@@ -4,16 +4,33 @@ import styles from "../styles/Landing.module.css";
 ---
 
 <Layout>
-    <div class={styles.landing}>
-        <section class={styles.hero}>
-            <h2>Welcome to Flash QC</h2>
-            <h3>Learn at Lightspeed</h3>
-            <div style={{ padding: "5%" }}>
-                <img src="landing.jpg" width="100%" alt="Landing Image" />
+    <div class="flex flex-col items-center justify-center min-h-[80vh] px-8">
+        <section class="text-center max-w-2xl">
+            <h2 class="text-5xl font-bold mb-4">Welcome to Flash QC</h2>
+            <h3 class="text-2xl text-muted-foreground mb-8">
+                Learn at Lightspeed
+            </h3>
+            <div class="px-[5%] mb-8">
+                <img
+                    src="landing.jpg"
+                    width="100%"
+                    alt="Landing Image"
+                    class="rounded-lg shadow-lg"
+                />
             </div>
-            <div class={styles.ctaButtons}>
-                <a href="/login" class={styles.btnPrimary}>Login</a>
-                <a href="/signup" class={styles.btnSecondary}>Sign Up</a>
+            <div class="flex gap-4 justify-center">
+                <a
+                    href="/login"
+                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-6"
+                >
+                    Login
+                </a>
+                <a
+                    href="/signup"
+                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 px-6"
+                >
+                    Sign Up
+                </a>
             </div>
         </section>
     </div>

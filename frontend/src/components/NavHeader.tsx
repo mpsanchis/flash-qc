@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import styles from "../styles/NavHeader.module.css";
+import { Button } from "@/components/ui/button";
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+
 export default function NavHeader() {
   const [token, setToken] = useState<string | null>("pending");
 
@@ -8,24 +16,69 @@ export default function NavHeader() {
   }, []);
 
   return (
-    <header className={styles.Main}>
-      <div className={styles.MainLeft}>
-        <a href="/landing">
-          <h1>Flash QC</h1>
-        </a>
-      </div>
-      <nav className={styles.MainRight}>
-        {token === null && <a href="/login">Login</a>}
-        {token && token !== "pending" && <a href="/">Study</a>}
-        {token && token !== "pending" && <a href="/">Library</a>}
-        {token && token !== "pending" && <a href="/">Plugins</a>}
-        {token && token !== "pending" && <a href="/logout">Logout</a>}
-        {token && token !== "pending" && (
-          <a href="/profile" className={styles.AccountLogo}>
-            <img src="/circle-user.svg" />
+    <header className="border-b bg-background">
+      <div className="flex h-16 items-center px-4 container mx-auto">
+        <div className="flex items-center gap-6 flex-1">
+          <a href="/landing" className="flex items-center gap-2 no-underline">
+            <h1 className="text-3xl font-bold text-primary">Flash QC</h1>
           </a>
-        )}
-      </nav>
+
+          {token && token !== "pending" && (
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    href="/"
+                    className={navigationMenuTriggerStyle()}
+                  >
+                    Study
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    href="/"
+                    className={navigationMenuTriggerStyle()}
+                  >
+                    Library
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink
+                    href="/"
+                    className={navigationMenuTriggerStyle()}
+                  >
+                    Plugins
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          )}
+        </div>
+
+        <nav className="flex items-center gap-4">
+          {token === null && (
+            <Button asChild variant="default">
+              <a href="/login">Login</a>
+            </Button>
+          )}
+          {token && token !== "pending" && (
+            <>
+              <Button asChild variant="ghost">
+                <a href="/logout">Logout</a>
+              </Button>
+              <Button asChild variant="outline" size="icon">
+                <a href="/profile">
+                  <img
+                    src="/circle-user.svg"
+                    className="h-5 w-5"
+                    alt="Profile"
+                  />
+                </a>
+              </Button>
+            </>
+          )}
+        </nav>
+      </div>
     </header>
   );
 }
