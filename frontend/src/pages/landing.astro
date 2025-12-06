@@ -1,0 +1,20 @@
+---
+import Layout from "../layouts/Layout.astro";
+import styles from "./landing.module.css";
+---
+
+<Layout>
+    <div class={styles.landing}>
+        <section class={styles.hero}>
+            <h2>Welcome to Flash QC</h2>
+            <h3>Learn at Lightspeed</h3>
+            <div style={{ padding: "5%" }}>
+                <img src="landing.jpg" width="100%" alt="Landing Image" />
+            </div>
+            <div class={styles.ctaButtons}>
+                <a href="/login" class={styles.btnPrimary}>Login</a>
+                <a href="/signup" class={styles.btnSecondary}>Sign Up</a>
+            </div>
+        </section>
+    </div>
+</Layout>

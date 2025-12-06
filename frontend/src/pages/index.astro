@@ -1,49 +1,49 @@
 ---
 import Layout from "../layouts/Layout.astro";
-
 ---
 
 <Layout>
-	<a
-		href="/profile"
-		style="position: absolute; top: 20px; right: 20px; padding: 10px 20px; font-size: 1rem; text-decoration: none; color: white; border-radius: 8px; font-weight: 600; cursor: pointer; z-index: 10;"
-	>
-	  <img src="/circle-user.svg"></img>
-	</a>
-	<main
-		style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80vh; gap: 20px;"
-	>
-		<div style="display: flex; gap: 20px; align-items: center;">
-			<h3 id="backend-status" style="margin: 0;">
-				Backend status: checking...
-			</h3>
-			<h3 id="active-plugin" style="margin: 0;">Plugin: --</h3>
-		</div>
-		<div style="display: flex; gap: 10px; margin-bottom: 10px;">
-			<button
-				id="color-btn"
-				style="padding: 10px 20px; font-size: 1rem; cursor: pointer; background: #667eea; color: white; border: none; border-radius: 8px; font-weight: 600;"
-			>
-				Change Background Color
-			</button>
-		</div>
-		<div style="display: flex; flex-direction: column; gap: 10px;">
-			<label for="decks-dropdown" style="font-weight: 600;">Select a Deck:</label>
-			<select
-				id="decks-dropdown"
-				style="padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; background: white;"
-			>
-				<option value="">Loading decks...</option>
-			</select>
-		</div>
-		<iframe
-			id="main-iframe"
-			width="800"
-			height="600"
-			style="border: 1px solid #ccc;"></iframe>
-	</main>
+    <main
+        style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80vh; gap: 20px;"
+    >
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <h3 id="backend-status" style="margin: 0;">
+                Backend status: checking...
+            </h3>
+            <h3 id="active-plugin" style="margin: 0;">Plugin: --</h3>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <button
+                id="color-btn"
+                style="padding: 10px 20px; font-size: 1rem; cursor: pointer; background: #667eea; color: white; border: none; border-radius: 8px; font-weight: 600;"
+            >
+                Change Background Color
+            </button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <label for="decks-dropdown" style="font-weight: 600;"
+                >Select a Deck:</label
+            >
+            <select
+                id="decks-dropdown"
+                style="padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; background: white;"
+            >
+                <option value="">Loading decks...</option>
+            </select>
+        </div>
+        <iframe
+            id="main-iframe"
+            width="800"
+            height="600"
+            style="border: 1px solid #ccc;"></iframe>
+    </main>
+    <script>
+        if (localStorage.getItem("token")) {
+        } else {
+            window.location.href = "/landing";
+        }
+    </script>
+    <script>
+        import "../scripts/index.ts";
+    </script>
 </Layout>
-
-<script>
-   	import "../scripts/index.ts";
-</script>
