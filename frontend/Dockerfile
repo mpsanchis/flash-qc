@@ -4,11 +4,15 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-COPY package*.json ./
-RUN pnpm install
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
 
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy application files
 COPY . .
 
 EXPOSE 3000
 
-CMD ["npm", "run", "dev:production"]
+CMD ["pnpm", "run", "dev:production"]

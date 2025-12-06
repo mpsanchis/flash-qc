@@ -24,6 +24,11 @@ export default defineConfig({
     // resolve to the same Vite version at runtime.
     plugins: [tailwindcss()],
     server: {
+      allowedHosts: [
+        'flash-qc.com',
+        'www.flash-qc.com',
+        'localhost',
+      ],
       proxy: {
         "/api": {
           target: BACKEND_BASE_URL,
