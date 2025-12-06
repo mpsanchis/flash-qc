@@ -3,40 +3,45 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout>
-    <main
-        style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 80vh; gap: 20px;"
-    >
-        <div style="display: flex; gap: 20px; align-items: center;">
-            <h3 id="backend-status" style="margin: 0;">
-                Backend status: checking...
+    <main class="flex flex-col justify-center items-center min-h-[80vh] gap-6 px-4">
+        <div class="flex gap-6 items-center flex-wrap justify-center">
+            <h3 id="backend-status" class="text-lg font-semibold m-0">
+                Backend status: <span class="text-muted-foreground">checking...</span>
             </h3>
-            <h3 id="active-plugin" style="margin: 0;">Plugin: --</h3>
+            <h3 id="active-plugin" class="text-lg font-semibold m-0">
+                Plugin: <span class="text-muted-foreground">--</span>
+            </h3>
         </div>
-        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+
+        <div class="flex gap-3 mb-3">
             <button
                 id="color-btn"
-                style="padding: 10px 20px; font-size: 1rem; cursor: pointer; background: #667eea; color: white; border: none; border-radius: 8px; font-weight: 600;"
+                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-6"
             >
                 Change Background Color
             </button>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-            <label for="decks-dropdown" style="font-weight: 600;"
-                >Select a Deck:</label
-            >
+
+        <div class="flex flex-col gap-2 w-full max-w-md">
+            <label for="decks-dropdown" class="text-sm font-medium">
+                Select a Deck:
+            </label>
             <select
                 id="decks-dropdown"
-                style="padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 8px; cursor: pointer; background: white;"
+                class="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
                 <option value="">Loading decks...</option>
             </select>
         </div>
+
         <iframe
             id="main-iframe"
             width="800"
             height="600"
-            style="border: 1px solid #ccc;"></iframe>
+            class="border rounded-lg shadow-md max-w-full"
+        ></iframe>
     </main>
+
     <script>
         if (localStorage.getItem("token")) {
         } else {
