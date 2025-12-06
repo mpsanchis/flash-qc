@@ -17,6 +17,11 @@ export default defineConfig({
   },
   vite: {
     server: {
+      allowedHosts: [
+        'flash-qc.com',
+        'www.flash-qc.com',
+        'localhost',
+      ],
       proxy: {
         "/api": {
           target: BACKEND_BASE_URL,

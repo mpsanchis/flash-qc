@@ -57,7 +57,22 @@ set -e
 if [ -z "$FQC_SKIP_BUILD" ]; then
   mise run build
 fi
+# CADDYFILE env var should be set by caller (dserve-local or dserve-prod)
 docker compose up --build --force-recreate -d
+"""
+
+[tasks.dserve-local]
+run = """
+#!/bin/bash
+export CADDYFILE=./Caddyfile.local
+mise run dserve
+"""
+
+[tasks.dserve-prod]
+run = """
+#!/bin/bash
+export CADDYFILE=./Caddyfile
+mise run dserve
 """
 
 [tasks.serve]
