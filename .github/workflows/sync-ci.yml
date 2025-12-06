@@ -1,0 +1,42 @@
+name: Sync CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  check-files:
+    runs-on: ubuntu-latest
+    outputs:
+      sync: ${{ steps.filter.outputs.sync }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            sync:
+              - '**/package.json'
+              - '**/tsconfig.json'
+              - 'pnpm-workspace.yaml'
+              - 'scripts/check-sync.js'
+  check-sync:
+    needs: check-files
+    if: needs.check-files.outputs.sync == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: pnpm
+          cache-dependency-path: ./pnpm-lock.yaml
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Check TS references and package sync
+        run: pnpm run check-sync
