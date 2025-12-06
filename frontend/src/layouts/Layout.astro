@@ -1,25 +1,27 @@
-<!doctype html>
+---
+import NavHeader from "../components/NavHeader.tsx";
+import "../styles/styles.css";
+---
+
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>flash-qc</title>
-	</head>
-	<body>
-   	<header>
-     	<h1>Flash QC</h1>
-    </header>
-		<slot />
-	</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="generator" content={Astro.generator} />
+        <title>flash-qc</title>
+    </head>
+    <body>
+        <NavHeader client:load />
+        <slot />
+    </body>
 </html>
 
 <style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
+    html,
+    body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
 </style>
