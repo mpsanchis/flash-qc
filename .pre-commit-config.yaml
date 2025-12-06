@@ -31,9 +31,6 @@ repos:
           - prettier-plugin-astro@0.14.1
         pass_filenames: true
         files: \.(astro|json|jsonc|css|scss|js|jsx|ts|tsx)$
-        additional_dependencies:
-          - prettier@3.6.2
-          - prettier-plugin-astro@0.14.1
 
   # --- Markdown: markdownlint-cli with auto-fix ---
   - repo: https://github.com/igorshubovych/markdownlint-cli
