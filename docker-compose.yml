@@ -27,8 +27,8 @@ services:
       - app-network
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: frontend/Dockerfile
     expose:
       - '3000'
     networks:

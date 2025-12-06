@@ -4,14 +4,19 @@ RUN npm install -g pnpm
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json pnpm-lock.yaml ./
+# Copy workspace package files
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+
+# Copy frontend package.json
+COPY frontend/package.json ./frontend/
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
 # Copy application files
-COPY . .
+COPY frontend ./frontend
+
+WORKDIR /app/frontend
 
 EXPOSE 3000
 
