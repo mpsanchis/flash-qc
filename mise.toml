@@ -4,6 +4,7 @@ pnpm = '10.19.0'
 rust = '1.89.0'
 tmux = '3.5'
 uv = '0.8.14'
+"pipx:pre-commit/pre-commit" = 'latest'
 
 [tasks.bootstrap]
 run = """
@@ -109,6 +110,31 @@ cargo clippy --all-targets --all-features
 
 [tasks.ci]
 depends = ["ci-astro", "ci-rust"]
+
+[tasks.fmt]
+description = "Format all files (runs pre-commit formatters on all files)"
+run = """
+#!/bin/bash
+set -e
+pre-commit run rustfmt --all-files || true
+pre-commit run prettier --all-files || true
+pre-commit run markdownlint-fix --all-files || true
+pre-commit run taplo-format --all-files || true
+pre-commit run sqlfluff-fix --all-files || true
+pre-commit run yamlfix --all-files || true
+echo "✓ Formatting complete"
+"""
+
+[tasks.lint]
+description = "Lint all files (runs pre-commit linters on all files)"
+run = """
+#!/bin/bash
+set -e
+pre-commit run clippy --all-files
+pre-commit run taplo-lint --all-files
+pre-commit run sqlfluff-lint --all-files
+echo "✓ Linting complete"
+"""
 
 [tasks.clean]
 run = """
