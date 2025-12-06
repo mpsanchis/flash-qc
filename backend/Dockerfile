@@ -1,8 +1,7 @@
-FROM rust:1.89-trixie AS builder
+FROM rust:1.91-trixie AS builder
 
 WORKDIR /app
-COPY backend/Cargo.toml ./
-COPY backend/Cargo.lock* ./
+COPY backend/Cargo.toml backend/Cargo.lock ./
 COPY backend/src ./src
 
 RUN cargo build --release
