@@ -41,6 +41,7 @@ services:
       - '8000'
     environment:
       - DATABASE_URL=postgres://flashqc:1234@postgres/flashqc
+      - SALT=12345678
     depends_on:
       postgres:
         condition: service_healthy
