@@ -1,0 +1,16 @@
+name: Pre-commit CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v2
+      - name: Install Rust components
+        run: rustup component add rustfmt clippy
+      - name: Run pre-commit on all files
+        run: mise run pre-commit-all
