@@ -1,6 +1,9 @@
 * {
   font-family: "Helvetica", sans-serif;
 }
+.body {
+  background-color: red;
+}
 
 #deck-list li button {
   margin-right: 25px;

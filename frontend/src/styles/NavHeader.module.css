@@ -1,0 +1,40 @@
+.Main {
+  display: flex;
+  justify-content: space-between;
+  height: 2cm;
+  background-color: lightgray;
+}
+
+.MainLeft {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15%;
+  padding-left: 0.5em;
+}
+
+.MainLeft a {
+  text-decoration: none;
+}
+
+.MainRight {
+  display: flex;
+  width: 85%;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.5cm;
+}
+.MainRight a {
+  text-decoration: none;
+  padding: 0.5em;
+}
+
+.AccountLogo {
+  padding: 10px 20px;
+  font-size: 1rem;
+  text-decoration: none;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}

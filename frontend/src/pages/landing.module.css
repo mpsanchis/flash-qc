@@ -1,0 +1,59 @@
+.landing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 2rem;
+}
+
+.hero {
+  text-align: center;
+  max-width: 600px;
+}
+
+.hero h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  color: #666;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.btnPrimary {
+  composes: btn;
+  background-color: #007bff;
+  color: white;
+}
+
+.btnPrimary:hover {
+  background-color: #0056b3;
+}
+
+.btnSecondary {
+  composes: btn;
+  background-color: #6c757d;
+  color: white;
+}
+
+.btnSecondary:hover {
+  background-color: #5a6268;
+}
