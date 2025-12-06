@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function Login() {
   const [error, setError] = useState<string | null>(null);
@@ -44,29 +45,59 @@ export default function Login() {
   }
 
   return (
-    <div id="login-container">
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="username"
-          id="username"
-          placeholder="Username"
-          required
-          disabled={loading}
-        />
-        <input
-          type="password"
-          name="password"
-          id="password"
-          placeholder="Password"
-          required
-          disabled={loading}
-        />
-        {error && <div className="error">{error}</div>}
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
+    <div className="flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold tracking-tight">Welcome Back</h1>
+          <p className="mt-2 text-muted-foreground">
+            Sign in to your account to continue
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="username" className="text-sm font-medium">
+                Username
+              </label>
+              <input
+                type="text"
+                name="username"
+                id="username"
+                placeholder="Enter your username"
+                required
+                disabled={loading}
+                className="w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-medium">
+                Password
+              </label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                placeholder="Enter your password"
+                required
+                disabled={loading}
+                className="w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+          </div>
+
+          {error && (
+            <div className="rounded-md bg-destructive/10 border border-destructive/20 px-4 py-3 text-sm text-destructive">
+              {error}
+            </div>
+          )}
+
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? "Logging in..." : "Login"}
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }
