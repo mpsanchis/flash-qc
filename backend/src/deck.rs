@@ -1,5 +1,6 @@
 use crate::schema::{card, deck};
 use crate::utils::db;
+use diesel::Connection;
 use diesel::prelude::QueryDsl;
 use diesel::{ExpressionMethods, RunQueryDsl};
 use diesel::Connection;
@@ -55,7 +56,6 @@ fn get_deck(id: i32) -> Result<Json<DeckWithCards>, status::NotFound<String>> {
 
     Ok(Json(DeckWithCards { deck, card_ids }))
 }
-
 
 #[delete("/<id>")]
 fn delete_deck(id: i32) -> Result<status::NoContent, status::Custom<String>> {

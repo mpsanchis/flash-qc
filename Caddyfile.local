@@ -1,0 +1,12 @@
+# Caddyfile.local - Local development configuration
+
+# Serve on localhost without HTTPS
+:80 {
+    reverse_proxy nginx:80
+
+    # Add logging for debugging
+    log {
+        output stdout
+        format console
+    }
+}
