@@ -1,7 +1,7 @@
 [tools]
 node = '24.7.0'
 pnpm = '10.19.0'
-rust = '1.89.0'
+rust = '1.92'
 tmux = '3.5'
 uv = '0.8.14'
 "pipx:pre-commit/pre-commit" = 'latest'
