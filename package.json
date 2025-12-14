@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "tsc --build",
     "clean": "rm -rf node_modules",
     "check-sync": "node scripts/check-sync.js"
   },
   "devDependencies": {
+    "@astrojs/check": "0.9.6",
     "@astrojs/react": "4.4.2",
     "glob": "11.0.2",
     "@types/react": "19.2.7",
