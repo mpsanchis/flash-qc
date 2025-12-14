@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "dev:production": "astro dev --mode production",
     "build": "astro build",
+    "check": "astro check",
     "preview": "astro preview",
     "astro": "astro",
     "clean": "rm -rf dist .astro"
@@ -17,5 +18,8 @@
     "astro": "5.16.4",
     "react": "19.2.1",
     "react-dom": "19.2.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.6"
   }
 }
