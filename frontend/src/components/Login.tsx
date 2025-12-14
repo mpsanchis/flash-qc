@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -88,6 +89,11 @@ export default function Login() {
               {error}
             </div>
           )}
+
+          <div className="flex items-center gap-3">
+            <Checkbox id="remember-me" />
+            <Label htmlFor="remember-me">Remember me</Label>
+          </div>
 
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? "Logging in..." : "Login"}
