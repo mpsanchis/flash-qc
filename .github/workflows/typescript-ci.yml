@@ -29,5 +29,7 @@ jobs:
       - uses: jdx/mise-action@v2
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Mise build
+        run: cargo install wasm-pack && mise build-frontend && mise build-plugins
       - name: TypeScript build
         run: pnpm run build
