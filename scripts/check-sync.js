@@ -71,7 +71,7 @@ const tsconfigRefs = new Set(
 // Find all workspace packages
 const workspacePackages = await glob(
   ["frontend", "plugins/*"].map((p) => resolve(ROOT, p)),
-  { onlyDirectories: true },
+  { onlyDirectories: true, absolute: true },
 );
 
 // Track which packages have tsconfig.json (TypeScript packages)
