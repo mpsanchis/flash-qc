@@ -2,7 +2,7 @@
 node = '24.7.0'
 pnpm = '10.19.0'
 rust = '1.92'
-tmux = '3.5'
+tmux = { version = '3.5', os = ["linux", "macos"] }
 uv = '0.8.14'
 "pipx:pre-commit/pre-commit" = 'latest'
 
