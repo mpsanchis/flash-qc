@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import styles from "../styles/Landing.module.css";
+import { Button } from "@/components/ui/button";
 ---
 
 <Layout>
@@ -19,18 +20,16 @@ import styles from "../styles/Landing.module.css";
                 />
             </div>
             <div class="flex gap-4 justify-center">
-                <a
-                    href="/login"
-                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-6"
-                >
+                <Button className="cursor-pointer bg-black text-white" variant="outline" size="lg" >
+                  <a href="/login">
                     Login
-                </a>
-                <a
-                    href="/signup"
-                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 px-6"
-                >
+                  </a>
+                </Button>
+              <Button className="cursor-pointer" variant="outline" size="lg">
+                <a href="/signup">
                     Sign Up
                 </a>
+              </Button>
             </div>
         </section>
     </div>
