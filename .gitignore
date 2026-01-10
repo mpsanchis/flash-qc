@@ -1,3 +1,6 @@
+# SOPS - age private key (the encrypted files are safe to commit)
+.sops/age-key.txt
+
 # Created by https://www.toptal.com/developers/gitignore/api/rust,node,astro,macos,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=rust,node,astro,macos,linux
 
