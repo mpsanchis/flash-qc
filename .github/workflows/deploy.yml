@@ -1,0 +1,40 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: Homebrew/actions/setup-homebrew@master
+      - name: Install age and sops
+        run: brew install age sops
+      - name: Decrypt secrets
+        run: |
+          echo "${{ secrets.SOPS_AGE_KEY }}" > /tmp/age-key.txt
+          trap "rm -f /tmp/age-key.txt" EXIT
+          export SOPS_AGE_KEY_FILE=/tmp/age-key.txt
+          VPS_HOST=$(sops decrypt --extract '["vps_host"]' .sops/deploy.enc.yaml)
+          VPS_USER=$(sops decrypt --extract '["vps_user"]' .sops/deploy.enc.yaml)
+          echo "VPS_HOST=$VPS_HOST" >> $GITHUB_ENV
+          echo "VPS_USER=$VPS_USER" >> $GITHUB_ENV
+          mkdir -p ~/.ssh
+          sops decrypt --extract '["ssh_private_key"]' .sops/deploy.enc.yaml > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H $VPS_HOST >> ~/.ssh/known_hosts
+      - name: Deploy
+        run: |-
+          ssh -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST '
+            set -e
+            cd ~/flash-qc
+            git fetch origin main
+            git reset --hard origin/main
+            docker compose up -d --build --force-recreate --remove-orphans
+            docker compose ps
+          '
