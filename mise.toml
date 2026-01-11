@@ -12,7 +12,7 @@ run = """
 #!/bin/bash
 set -e
 cargo install --path tools/fqc --force
-cargo install diesel_cli --no-default-features --features postgres
+cargo install diesel_cli --no-default-features --features postgres-bundled
 cargo install wasm-pack@0.13.1
 """
 
