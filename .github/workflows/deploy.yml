@@ -28,13 +28,59 @@ jobs:
           sops decrypt --extract '["ssh_private_key"]' .sops/deploy.enc.yaml > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H $VPS_HOST >> ~/.ssh/known_hosts
+          # Extract git deploy key for private repo access
+          sops decrypt --extract '["git_deploy_key"]' .sops/deploy.enc.yaml > /tmp/git_deploy_key
+          chmod 600 /tmp/git_deploy_key
       - name: Deploy
         run: |-
+          # Copy git deploy key to VPS
+          trap "rm -f /tmp/git_deploy_key" EXIT
+          ssh -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST 'mkdir -p ~/.ssh && chmod 700 ~/.ssh'
+          scp -i ~/.ssh/deploy_key /tmp/git_deploy_key $VPS_USER@$VPS_HOST:~/.ssh/flash-qc-deploy
           ssh -i ~/.ssh/deploy_key $VPS_USER@$VPS_HOST '
             set -e
+            chmod 600 ~/.ssh/flash-qc-deploy
+            # Configure SSH to use deploy key for GitHub
+            cat > ~/.ssh/config <<EOF
+          Host github.com
+            HostName github.com
+            User git
+            IdentityFile ~/.ssh/flash-qc-deploy
+            IdentitiesOnly yes
+          EOF
+            chmod 600 ~/.ssh/config
+            # Ensure known_hosts has GitHub
+            ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2>/dev/null || true
+            
+            # Verify SSH connection to GitHub works
+            echo "Testing GitHub SSH connection..."
+            ssh -T git@github.com 2>&1 | grep -q "successfully authenticated" || {
+              echo "ERROR: GitHub SSH authentication failed. Is the deploy key added to the repo?"
+              exit 1
+            }
+            echo "✓ GitHub SSH connection verified"
+            
+            # Ensure repo exists
+            if [ ! -d ~/flash-qc/.git ]; then
+              echo "Cloning repository..."
+              git clone git@github.com:mpsanchis/flash-qc.git ~/flash-qc
+            fi
+            
             cd ~/flash-qc
+            # Switch remote to SSH if needed
+            git remote set-url origin git@github.com:mpsanchis/flash-qc.git
             git fetch origin main
-            git reset --hard origin/main
+
+            # Abort any in-progress operations and discard all local changes
+            git rebase --abort 2>/dev/null || true
+            git merge --abort 2>/dev/null || true
+            
+            # Nuke working directory to guarantee clean state
+            git reset --hard HEAD
+            git clean -fd
+            git checkout -B main origin/main
+            
+            # Install tools and deploy
             mise install
             mise run install-build-deps
             mise run dserve-prod
