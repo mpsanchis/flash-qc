@@ -13,14 +13,10 @@ use crate::models::{Deck, DeckWithCards};
 #[get("/")]
 fn get_decks() -> String {
     let mut db_connection = db::get_connection().lock().unwrap();
-
     let decks: Vec<Deck> = deck::table
-        .select((deck::id, deck::name))
+        .select(deck::all_columns)
         .load(&mut *db_connection)
-        .unwrap()
-        .into_iter()
-        .map(|(id, name)| Deck { id, name })
-        .collect();
+        .unwrap();
 
     serde_json::to_string(&decks).unwrap()
 }
