@@ -1,0 +1,11 @@
+{
+  "name": "@flash-qc/plugin-rubiks-cube",
+  "version": "0.1.0",
+  "description": "A WASM-powered 3D Rubik's Cube plugin with WebGL",
+  "type": "module",
+  "scripts": {
+    "build": "wasm-pack build --target web",
+    "watch": "wasm-pack build --target web --watch",
+    "clean": "rm -rf pkg"
+  }
+}

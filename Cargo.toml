@@ -1,4 +1,9 @@
 [workspace]
 resolver = "3"
-members = ["backend", "plugins/drawing-canvas", "tools/fqc"]
+members = [
+  "backend",
+  "plugins/drawing-canvas",
+  "plugins/rubiks-cube",
+  "tools/fqc",
+]
 default-members = ["backend"]
