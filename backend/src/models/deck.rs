@@ -74,13 +74,13 @@ impl Default for Deck {
             id: 0,
             name: "Default Deck".to_string(),
             desired_retention: 0.9,
-            initial_stability_again_0: 0.212,
+            initial_stability_again_0: 0.4314,
             initial_stability_hard_1: 1.2931,
-            initial_stability_good_2: 2.3065,
-            initial_stability_easy_3: 8.2956,
-            initial_difficulty_4: 6.4133,
-            initial_difficulty_multiplier_5: 0.8334,
-            difficulty_adjustment_6: 3.0194,
+            initial_stability_good_2: 4.0288,
+            initial_stability_easy_3: 18.7106,
+            initial_difficulty_4: 7.4139,
+            initial_difficulty_multiplier_5: 0.5717,
+            difficulty_adjustment_6: 1.8233,
             difficulty_mean_regression_7: 0.001,
             stability_exponent_8: 1.8722,
             stability_negative_power_9: 0.0614,
@@ -115,7 +115,8 @@ impl Deck {
     /// Needed because update_difficulty requires a D(easy_start_diff)
     fn initial_difficulty_calculation(&self, grade: u8) -> f32 {
         self.initial_difficulty_4
-            - (self.initial_difficulty_multiplier_5 * (5 - grade) as f32).exp()
+            - (self.initial_difficulty_multiplier_5 * (grade - 1) as f32).exp()
+            + 1.0
     }
 
     /// Only for the first ever training of a card
@@ -125,26 +126,24 @@ impl Deck {
             //TODO crash
             return;
         }
-        card.difficulty = Some(
-            self.initial_difficulty_4
-                - (self.initial_difficulty_multiplier_5 * (5 - grade) as f32).exp(),
-        );
+        card.difficulty = Some(self.initial_difficulty_calculation(grade));
     }
 
     pub fn update_difficulty(&self, card: &mut Card, grade: u8) {
         let current_difficulty = card.difficulty.unwrap();
-        let difficulty_delta = self.difficulty_adjustment_6 * (grade as f32 - 3.0);
+        let difficulty_delta = -self.difficulty_adjustment_6 * (grade as f32 - 3.0);
         // the second multiplication will be always 1 or less, so it makes the difficulty delta
         // smaller, to never allow it to reach 10 (the max diff)
-        let linear_dampened_delta = difficulty_delta * (10.0 - current_difficulty) / 10.0;
+        let linear_dampened_delta = difficulty_delta * (10.0 - current_difficulty) / 9.0;
         let new_difficulty = current_difficulty + linear_dampened_delta;
         // apply mean regression: The idea here is that if we grade it 3, the difficulty should
         // converge to its default value. This is important! the default difficulty is whatever the
         // "good" difficulty is, not the "easy" one.
         let mean_regressed_difficulty = new_difficulty * (1.0 - self.difficulty_mean_regression_7)
-            + self.difficulty_mean_regression_7 * self.initial_difficulty_calculation(3)
-            + (1.0 - self.difficulty_mean_regression_7) * new_difficulty;
-        card.difficulty = Some(mean_regressed_difficulty);
+            + self.difficulty_mean_regression_7 * self.initial_difficulty_calculation(4);
+        // Clamp difficulty to [1, 10]
+        let clamped_difficulty = mean_regressed_difficulty.clamp(1.0, 10.0);
+        card.difficulty = Some(clamped_difficulty);
     }
 }
 
@@ -152,4 +151,98 @@ impl Deck {
 pub struct DeckWithCards {
     pub deck: Deck,
     pub card_ids: Vec<i32>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn create_test_card() -> Card {
+        Card {
+            id: 1,
+            deck_id: 1,
+            plugin_id: 1,
+            plugin_name: "test".to_string(),
+            plugin_data: serde_json::json!({}),
+            difficulty: None,
+            retrievability: None,
+            stability: None,
+        }
+    }
+
+    #[test]
+    fn test_initial_difficulty_calculation() {
+        let deck = Deck::default();
+        let mut card = create_test_card();
+
+        // Calculate initial difficulty with grade 3 (Good)
+        deck.calculate_first_difficulty(&mut card, 3);
+
+        assert!(card.difficulty.is_some());
+        let difficulty = card.difficulty.unwrap();
+
+        // Initial difficulty should be set
+        assert!(difficulty > 0.0);
+        assert!(difficulty < 10.0);
+
+        println!("Initial difficulty (grade 3): {}", difficulty);
+    }
+
+    #[test]
+    fn test_difficulty_progression_fail_then_succeed() {
+        let deck = Deck::default();
+        let mut card = create_test_card();
+
+        // Calculate initial difficulty with grade 3 (Good)
+        deck.calculate_first_difficulty(&mut card, 3);
+        let initial_difficulty = card.difficulty.unwrap();
+        println!("Initial difficulty: {:.4}", initial_difficulty);
+
+        // Fail the card (grade 1 - Again)
+        deck.update_difficulty(&mut card, 1);
+        let difficulty_after_failure = card.difficulty.unwrap();
+        println!("Difficulty after failure: {:.4}", difficulty_after_failure);
+
+        // Difficulty should increase after failure
+        assert!(
+            difficulty_after_failure > initial_difficulty,
+            "Difficulty should increase on failure. Before: {}, After: {}",
+            initial_difficulty,
+            difficulty_after_failure
+        );
+
+        // Keep succeeding (grade 4) until difficulty drops close to 1
+        println!("\nDifficulty progression with repeated successes:");
+        for i in 1..=20 {
+            let prev_difficulty = card.difficulty.unwrap();
+            deck.update_difficulty(&mut card, 4);
+            let new_difficulty = card.difficulty.unwrap();
+
+            println!(
+                "After success #{}: {:.4} (delta: {:.4})",
+                i,
+                new_difficulty,
+                new_difficulty - prev_difficulty
+            );
+
+            // Difficulty should keep decreasing or stay the same
+            assert!(new_difficulty <= prev_difficulty);
+
+            // Difficulty should not go below 1
+            assert!(
+                new_difficulty >= 1.0,
+                "Difficulty went below min: {}",
+                new_difficulty
+            );
+        }
+
+        let final_difficulty = card.difficulty.unwrap();
+
+        // After many successes, difficulty should drop close to 1
+        assert!(
+            final_difficulty <= 2.0,
+            "After 20 successes, difficulty should drop close to 1, got: {:.4}",
+            final_difficulty
+        );
+    }
 }
