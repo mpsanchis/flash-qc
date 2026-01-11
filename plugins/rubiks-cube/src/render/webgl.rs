@@ -1,6 +1,7 @@
 use crate::cube::CubeState;
+use crate::input::{FaceDrag, LayerAnimation};
 use crate::math::Mat4;
-use crate::render::{Camera, CubeMesh};
+use crate::render::{Camera, CubeMesh, SplitMesh};
 use wasm_bindgen::JsCast;
 use web_sys::{HtmlCanvasElement, WebGlProgram, WebGlRenderingContext, WebGlUniformLocation};
 
@@ -106,6 +107,180 @@ impl Renderer {
         self.mesh.update(&self.gl, state);
     }
 
+    /// Render with an animating layer
+    pub fn render_animated(&self, camera: &Camera, state: &CubeState, animation: &LayerAnimation) {
+        let gl = &self.gl;
+
+        gl.clear(WebGlRenderingContext::COLOR_BUFFER_BIT | WebGlRenderingContext::DEPTH_BUFFER_BIT);
+
+        // Create split meshes
+        let split = match SplitMesh::new(gl, state, animation) {
+            Some(m) => m,
+            None => return,
+        };
+
+        // Set common uniforms
+        gl.uniform_matrix4fv_with_f32_array(
+            Some(&self.u_view),
+            false,
+            camera.view_matrix().as_slice(),
+        );
+        gl.uniform_matrix4fv_with_f32_array(
+            Some(&self.u_projection),
+            false,
+            camera.projection_matrix().as_slice(),
+        );
+        gl.uniform3f(Some(&self.u_light_dir), 0.5, 0.7, 1.0);
+
+        // Render static cubelets with identity model matrix
+        let identity = Mat4::identity();
+        gl.uniform_matrix4fv_with_f32_array(Some(&self.u_model), false, identity.as_slice());
+
+        gl.bind_buffer(
+            WebGlRenderingContext::ARRAY_BUFFER,
+            Some(&split.static_mesh.vertex_buffer),
+        );
+        gl.bind_buffer(
+            WebGlRenderingContext::ELEMENT_ARRAY_BUFFER,
+            Some(&split.static_mesh.index_buffer),
+        );
+        setup_attributes(gl, &self.program);
+        gl.draw_elements_with_i32(
+            WebGlRenderingContext::TRIANGLES,
+            split.static_mesh.index_count,
+            WebGlRenderingContext::UNSIGNED_SHORT,
+            0,
+        );
+
+        // Render animating layer with rotation matrix
+        let layer_model = animation.get_rotation_matrix();
+        gl.uniform_matrix4fv_with_f32_array(Some(&self.u_model), false, layer_model.as_slice());
+
+        gl.bind_buffer(
+            WebGlRenderingContext::ARRAY_BUFFER,
+            Some(&split.layer_mesh.vertex_buffer),
+        );
+        gl.bind_buffer(
+            WebGlRenderingContext::ELEMENT_ARRAY_BUFFER,
+            Some(&split.layer_mesh.index_buffer),
+        );
+        setup_attributes(gl, &self.program);
+        gl.draw_elements_with_i32(
+            WebGlRenderingContext::TRIANGLES,
+            split.layer_mesh.index_count,
+            WebGlRenderingContext::UNSIGNED_SHORT,
+            0,
+        );
+    }
+
+    /// Render with a face being dragged
+    pub fn render_with_drag(&self, camera: &Camera, state: &CubeState, drag: &FaceDrag) {
+        let gl = &self.gl;
+
+        gl.clear(WebGlRenderingContext::COLOR_BUFFER_BIT | WebGlRenderingContext::DEPTH_BUFFER_BIT);
+
+        // If layer not determined yet, just render normally
+        if drag.layer.is_none() {
+            self.render_state(camera, state);
+            return;
+        }
+
+        // Create split meshes for the drag
+        let split = match SplitMesh::from_drag(gl, state, drag) {
+            Some(m) => m,
+            None => return,
+        };
+
+        // Set common uniforms
+        gl.uniform_matrix4fv_with_f32_array(
+            Some(&self.u_view),
+            false,
+            camera.view_matrix().as_slice(),
+        );
+        gl.uniform_matrix4fv_with_f32_array(
+            Some(&self.u_projection),
+            false,
+            camera.projection_matrix().as_slice(),
+        );
+        gl.uniform3f(Some(&self.u_light_dir), 0.5, 0.7, 1.0);
+
+        // Render static cubelets
+        let identity = Mat4::identity();
+        gl.uniform_matrix4fv_with_f32_array(Some(&self.u_model), false, identity.as_slice());
+
+        gl.bind_buffer(
+            WebGlRenderingContext::ARRAY_BUFFER,
+            Some(&split.static_mesh.vertex_buffer),
+        );
+        gl.bind_buffer(
+            WebGlRenderingContext::ELEMENT_ARRAY_BUFFER,
+            Some(&split.static_mesh.index_buffer),
+        );
+        setup_attributes(gl, &self.program);
+        gl.draw_elements_with_i32(
+            WebGlRenderingContext::TRIANGLES,
+            split.static_mesh.index_count,
+            WebGlRenderingContext::UNSIGNED_SHORT,
+            0,
+        );
+
+        // Render dragging layer with rotation
+        let layer_model = drag.get_rotation_matrix();
+        gl.uniform_matrix4fv_with_f32_array(Some(&self.u_model), false, layer_model.as_slice());
+
+        gl.bind_buffer(
+            WebGlRenderingContext::ARRAY_BUFFER,
+            Some(&split.layer_mesh.vertex_buffer),
+        );
+        gl.bind_buffer(
+            WebGlRenderingContext::ELEMENT_ARRAY_BUFFER,
+            Some(&split.layer_mesh.index_buffer),
+        );
+        setup_attributes(gl, &self.program);
+        gl.draw_elements_with_i32(
+            WebGlRenderingContext::TRIANGLES,
+            split.layer_mesh.index_count,
+            WebGlRenderingContext::UNSIGNED_SHORT,
+            0,
+        );
+    }
+
+    /// Render cube state without any animation
+    fn render_state(&self, camera: &Camera, _state: &CubeState) {
+        let gl = &self.gl;
+
+        gl.uniform_matrix4fv_with_f32_array(
+            Some(&self.u_view),
+            false,
+            camera.view_matrix().as_slice(),
+        );
+        gl.uniform_matrix4fv_with_f32_array(
+            Some(&self.u_projection),
+            false,
+            camera.projection_matrix().as_slice(),
+        );
+        gl.uniform3f(Some(&self.u_light_dir), 0.5, 0.7, 1.0);
+
+        let identity = Mat4::identity();
+        gl.uniform_matrix4fv_with_f32_array(Some(&self.u_model), false, identity.as_slice());
+
+        gl.bind_buffer(
+            WebGlRenderingContext::ARRAY_BUFFER,
+            Some(&self.mesh.vertex_buffer),
+        );
+        gl.bind_buffer(
+            WebGlRenderingContext::ELEMENT_ARRAY_BUFFER,
+            Some(&self.mesh.index_buffer),
+        );
+        setup_attributes(gl, &self.program);
+        gl.draw_elements_with_i32(
+            WebGlRenderingContext::TRIANGLES,
+            self.mesh.index_count,
+            WebGlRenderingContext::UNSIGNED_SHORT,
+            0,
+        );
+    }
+
     pub fn resize(&self, width: u32, height: u32) {
         self.gl.viewport(0, 0, width as i32, height as i32);
     }
@@ -137,7 +312,9 @@ fn compile_shader(
     shader_type: u32,
     source: &str,
 ) -> Result<web_sys::WebGlShader, String> {
-    let shader = gl.create_shader(shader_type).ok_or("Failed to create shader")?;
+    let shader = gl
+        .create_shader(shader_type)
+        .ok_or("Failed to create shader")?;
     gl.shader_source(&shader, source);
     gl.compile_shader(&shader);
 
@@ -158,7 +335,14 @@ fn setup_attributes(gl: &WebGlRenderingContext, program: &WebGlProgram) {
 
     let a_position = gl.get_attrib_location(program, "a_position") as u32;
     gl.enable_vertex_attrib_array(a_position);
-    gl.vertex_attrib_pointer_with_i32(a_position, 3, WebGlRenderingContext::FLOAT, false, stride, 0);
+    gl.vertex_attrib_pointer_with_i32(
+        a_position,
+        3,
+        WebGlRenderingContext::FLOAT,
+        false,
+        stride,
+        0,
+    );
 
     let a_normal = gl.get_attrib_location(program, "a_normal") as u32;
     gl.enable_vertex_attrib_array(a_normal);

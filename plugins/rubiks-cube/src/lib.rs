@@ -6,13 +6,13 @@ mod render;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use cube::{parse_scramble, CubeState, Move};
-use input::{LayerAnimation, MouseHandler};
+use cube::{CubeState, Move, parse_scramble};
+use input::{FaceDrag, LayerAnimation, MouseHandler};
 use math::Mat4;
-use render::{Camera, FaceHit, RayPicker, Renderer};
+use render::{Camera, RayPicker, Renderer};
 
-use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
+use wasm_bindgen::prelude::*;
 use web_sys::{HtmlCanvasElement, MouseEvent};
 
 #[wasm_bindgen]
@@ -23,7 +23,9 @@ pub struct RubiksCube {
     state: Rc<RefCell<CubeState>>,
     mouse: Rc<RefCell<MouseHandler>>,
     animation: Rc<RefCell<Option<LayerAnimation>>>,
+    face_drag: Rc<RefCell<Option<FaceDrag>>>,
     move_count: Rc<RefCell<u32>>,
+    needs_mesh_update: Rc<RefCell<bool>>,
     closures: Vec<Closure<dyn FnMut(MouseEvent)>>,
 }
 
@@ -51,26 +53,30 @@ impl RubiksCube {
             state: Rc::new(RefCell::new(state)),
             mouse: Rc::new(RefCell::new(MouseHandler::new())),
             animation: Rc::new(RefCell::new(None)),
+            face_drag: Rc::new(RefCell::new(None)),
             move_count: Rc::new(RefCell::new(0)),
+            needs_mesh_update: Rc::new(RefCell::new(false)),
             closures: Vec::new(),
         })
     }
 
     pub fn setup_event_listeners(&mut self) -> Result<(), JsValue> {
         let canvas = &self.canvas;
+        let canvas_ref = canvas.clone();
 
-        // Mouse down - start drag or pick face
+        // Mouse down - start face drag or camera drag
         {
             let mouse = self.mouse.clone();
             let camera = self.camera.clone();
             let animation = self.animation.clone();
-            let move_count = self.move_count.clone();
-            let canvas_width = canvas.width() as f32;
-            let canvas_height = canvas.height() as f32;
+            let face_drag = self.face_drag.clone();
+            let canvas_clone = canvas_ref.clone();
 
             let closure = Closure::wrap(Box::new(move |event: MouseEvent| {
                 let x = event.offset_x() as f32;
                 let y = event.offset_y() as f32;
+                let canvas_width = canvas_clone.width() as f32;
+                let canvas_height = canvas_clone.height() as f32;
 
                 // If animation is running, ignore input
                 if animation.borrow().is_some() {
@@ -80,48 +86,64 @@ impl RubiksCube {
                 // Try to pick a face first
                 let cam = camera.borrow();
                 if let Some(hit) = RayPicker::pick(&cam, x, y, canvas_width, canvas_height) {
-                    // Determine which move to make based on clicked face
-                    let cube_move = face_hit_to_move(&hit);
-                    if let Some(m) = cube_move {
-                        let window = web_sys::window().unwrap();
-                        let perf = window.performance().unwrap();
-                        let now = perf.now();
-                        *animation.borrow_mut() = Some(LayerAnimation::new(m, now));
-                        *move_count.borrow_mut() += 1;
-                    }
+                    // Start face drag
+                    *face_drag.borrow_mut() = Some(FaceDrag::new(hit.face, x, y));
                 } else {
                     // Start drag for camera rotation
                     mouse.borrow_mut().start_drag(x, y);
                 }
             }) as Box<dyn FnMut(MouseEvent)>);
 
-            canvas.add_event_listener_with_callback("mousedown", closure.as_ref().unchecked_ref())?;
+            canvas
+                .add_event_listener_with_callback("mousedown", closure.as_ref().unchecked_ref())?;
             self.closures.push(closure);
         }
 
-        // Mouse move - camera rotation
+        // Mouse move - face drag or camera rotation
         {
             let mouse = self.mouse.clone();
             let camera = self.camera.clone();
+            let face_drag = self.face_drag.clone();
 
             let closure = Closure::wrap(Box::new(move |event: MouseEvent| {
                 let x = event.offset_x() as f32;
                 let y = event.offset_y() as f32;
 
+                // Check if we're doing a face drag
+                if let Some(ref mut drag) = *face_drag.borrow_mut() {
+                    drag.update(x, y);
+                    return;
+                }
+
+                // Otherwise, camera rotation
                 if let Some(delta) = mouse.borrow_mut().drag(x, y) {
                     camera.borrow_mut().rotate(delta);
                 }
             }) as Box<dyn FnMut(MouseEvent)>);
 
-            canvas.add_event_listener_with_callback("mousemove", closure.as_ref().unchecked_ref())?;
+            canvas
+                .add_event_listener_with_callback("mousemove", closure.as_ref().unchecked_ref())?;
             self.closures.push(closure);
         }
 
-        // Mouse up - end drag
+        // Mouse up - finish face drag or end camera drag
         {
             let mouse = self.mouse.clone();
+            let face_drag = self.face_drag.clone();
+            let state = self.state.clone();
+            let move_count = self.move_count.clone();
+            let needs_mesh_update = self.needs_mesh_update.clone();
 
             let closure = Closure::wrap(Box::new(move |_event: MouseEvent| {
+                // Finish face drag if active
+                if let Some(drag) = face_drag.borrow_mut().take() {
+                    if let Some(m) = drag.finish() {
+                        state.borrow_mut().apply_move(m);
+                        *move_count.borrow_mut() += 1;
+                    }
+                    // Always update mesh after drag ends
+                    *needs_mesh_update.borrow_mut() = true;
+                }
                 mouse.borrow_mut().end_drag();
             }) as Box<dyn FnMut(MouseEvent)>);
 
@@ -129,15 +151,18 @@ impl RubiksCube {
             self.closures.push(closure);
         }
 
-        // Mouse leave - end drag
+        // Mouse leave - cancel face drag, end camera drag
         {
             let mouse = self.mouse.clone();
+            let face_drag = self.face_drag.clone();
 
             let closure = Closure::wrap(Box::new(move |_event: MouseEvent| {
+                *face_drag.borrow_mut() = None;
                 mouse.borrow_mut().end_drag();
             }) as Box<dyn FnMut(MouseEvent)>);
 
-            canvas.add_event_listener_with_callback("mouseleave", closure.as_ref().unchecked_ref())?;
+            canvas
+                .add_event_listener_with_callback("mouseleave", closure.as_ref().unchecked_ref())?;
             self.closures.push(closure);
         }
 
@@ -149,8 +174,15 @@ impl RubiksCube {
         let perf = window.performance().unwrap();
         let now = perf.now();
 
+        // Check if mesh needs update (after drag finished)
+        if *self.needs_mesh_update.borrow() {
+            self.renderer.update_mesh(&self.state.borrow());
+            *self.needs_mesh_update.borrow_mut() = false;
+        }
+
         // Update animation
         let mut should_apply_move: Option<Move> = None;
+        let mut current_animation: Option<LayerAnimation> = None;
         {
             let mut anim = self.animation.borrow_mut();
             if let Some(ref mut animation) = *anim {
@@ -158,6 +190,13 @@ impl RubiksCube {
                     // Animation complete, apply the move
                     should_apply_move = Some(animation.cube_move);
                     *anim = None;
+                } else {
+                    // Animation in progress - clone for rendering
+                    current_animation = Some(LayerAnimation::new(
+                        animation.cube_move,
+                        animation.start_time,
+                    ));
+                    current_animation.as_mut().unwrap().current_angle = animation.current_angle;
                 }
             }
         }
@@ -169,8 +208,18 @@ impl RubiksCube {
 
         // Render
         let camera = self.camera.borrow();
-        let model = Mat4::identity();
-        self.renderer.render(&camera, &model);
+
+        // Check if we're doing a face drag
+        if let Some(ref drag) = *self.face_drag.borrow() {
+            self.renderer
+                .render_with_drag(&camera, &self.state.borrow(), drag);
+        } else if let Some(ref anim) = current_animation {
+            self.renderer
+                .render_animated(&camera, &self.state.borrow(), anim);
+        } else {
+            let model = Mat4::identity();
+            self.renderer.render(&camera, &model);
+        }
     }
 
     pub fn scramble(&mut self, notation: &str) {
@@ -198,21 +247,9 @@ impl RubiksCube {
     pub fn resize(&mut self, width: u32, height: u32) {
         self.canvas.set_width(width);
         self.canvas.set_height(height);
-        self.camera.borrow_mut().set_aspect(width as f32 / height as f32);
+        self.camera
+            .borrow_mut()
+            .set_aspect(width as f32 / height as f32);
         self.renderer.resize(width, height);
-    }
-}
-
-/// Convert a face hit to a cube move
-/// For simplicity, clicking on a face rotates that face clockwise
-fn face_hit_to_move(hit: &FaceHit) -> Option<Move> {
-    match hit.face {
-        0 => Some(Move::U),  // Up
-        1 => Some(Move::D),  // Down
-        2 => Some(Move::F),  // Front
-        3 => Some(Move::B),  // Back
-        4 => Some(Move::L),  // Left
-        5 => Some(Move::R),  // Right
-        _ => None,
     }
 }

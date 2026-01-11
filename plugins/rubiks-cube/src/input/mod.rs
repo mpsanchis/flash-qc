@@ -1,5 +1,5 @@
 mod animation;
 mod mouse;
 
-pub use animation::LayerAnimation;
+pub use animation::{FaceDrag, LayerAnimation};
 pub use mouse::MouseHandler;

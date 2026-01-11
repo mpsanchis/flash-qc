@@ -41,7 +41,7 @@ impl Quaternion {
         )
     }
 
-    pub fn to_rotation_matrix(&self) -> Mat4 {
+    pub fn to_rotation_matrix(self) -> Mat4 {
         let xx = self.x * self.x;
         let yy = self.y * self.y;
         let zz = self.z * self.z;

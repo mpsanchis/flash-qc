@@ -69,3 +69,56 @@ button:active {
   font-size: 14px;
   font-weight: 600;
 }
+
+#solved-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+
+#solved-overlay.hidden {
+  display: none;
+}
+
+.overlay-content {
+  text-align: center;
+  color: white;
+}
+
+.overlay-content h1 {
+  font-size: 4rem;
+  color: #22c55e;
+  margin-bottom: 16px;
+  text-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+}
+
+.overlay-content p {
+  font-size: 1.25rem;
+  color: #e5e5e5;
+  margin-bottom: 32px;
+}
+
+#continue-btn {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 16px 48px;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#continue-btn:hover {
+  background: #16a34a;
+  transform: scale(1.05);
+}

@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rubik's Cube</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <canvas id="rubiks-canvas"></canvas>
     <div class="controls">
         <button id="reset-btn">Reset</button>
         <span id="move-counter">Moves: 0</span>
         <span id="status"></span>
-        <button id="done-btn">Memorized</button>
+        <button id="done-btn">Skip</button>
+    </div>
+    <div id="solved-overlay" class="hidden">
+        <div class="overlay-content">
+            <h1>Finished!</h1>
+            <p id="solve-time"></p>
+            <button id="continue-btn">Continue</button>
+        </div>
     </div>
 
     <script type="module">
@@ -77,8 +86,13 @@
                 updateMoveCounter();
             });
 
-            // Handle Memorized button - advance to next card
+            // Handle Skip button - advance to next card
             document.getElementById('done-btn').addEventListener('click', () => {
+                window.parent.postMessage({ type: 'memorized' }, '*');
+            });
+
+            // Handle Continue button on solved overlay
+            document.getElementById('continue-btn').addEventListener('click', () => {
                 window.parent.postMessage({ type: 'memorized' }, '*');
             });
 
@@ -92,13 +106,8 @@
                     solved = true;
                     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
                     document.getElementById('status').textContent = `Solved in ${elapsed}s!`;
-
-                    // Send success message to parent
-                    window.parent.postMessage({
-                        type: 'finish',
-                        reason: 'success',
-                        statusCode: 0,
-                    }, '*');
+                    document.getElementById('solve-time').textContent = `Solved in ${elapsed}s with ${cube.get_move_count()} moves`;
+                    document.getElementById('solved-overlay').classList.remove('hidden');
                 }
 
                 requestAnimationFrame(animate);
@@ -116,4 +125,5 @@
         run();
     </script>
 </body>
+
 </html>
