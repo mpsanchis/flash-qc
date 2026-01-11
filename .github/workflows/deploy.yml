@@ -81,6 +81,13 @@ jobs:
             git clean -fd
             git checkout -B main origin/main
             
+            # Install mise if not already installed
+            if ! command -v mise &> /dev/null; then
+              echo "Installing mise..."
+              curl https://mise.jdx.dev/install.sh | sh
+              export PATH="$HOME/.local/bin:$PATH"
+            fi
+            
             # Install tools and deploy
             mise install
             mise run install-build-deps
