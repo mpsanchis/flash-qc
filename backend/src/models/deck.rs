@@ -1,6 +1,8 @@
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
+use super::card::Card;
+
 #[derive(Debug, Insertable, Deserialize, Selectable, Serialize, Queryable)]
 #[diesel(table_name = crate::schema::deck)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
@@ -97,50 +99,52 @@ impl Default for Deck {
     }
 }
 
-#[derive(Debug, Deserialize, Insertable, Serialize, Queryable)]
-#[diesel(table_name = crate::schema::plugin)]
-#[diesel(check_for_backend(diesel::pg::Pg))]
-pub struct Plugin {
-    pub id: i32,
-    pub name: String,
-}
-
-#[derive(Debug, Insertable, Deserialize, Selectable, Serialize, Queryable)]
-#[diesel(table_name = crate::schema::card)]
-#[diesel(belongs_to(Deck), belongs_to(Plugin))]
-#[diesel(check_for_backend(diesel::pg::Pg))]
-pub struct Card {
-    pub id: i32,
-    pub deck_id: i32,
-    pub plugin_id: i32,
-    pub plugin_name: String,
-    pub plugin_data: serde_json::Value,
-    pub difficulty: Option<f32>,
-    pub retrievability: Option<f32>,
-    /// Amount of days which takes for retrievability to go from 100% to 90
-    pub stability: Option<f32>,
-}
-
-impl Card {
-    pub fn calculate_next_training(&mut self, grade: u8, con: &mut PgConnection) {
-        // get deck
-        let _deck = crate::schema::deck::table
-            .find(self.deck_id)
-            .first::<Deck>(con)
-            .expect("Error loading deck");
-        self.stability = Some(self.stability.unwrap() + grade as f32);
+impl Deck {
+    /// Get all cards belonging to this deck
+    pub fn get_cards(&self, con: &mut PgConnection) -> Vec<Card> {
+        use crate::schema::card::dsl::*;
+        card.filter(deck_id.eq(self.id))
+            .load::<Card>(con)
+            .expect("Error loading cards")
     }
+
+    pub fn calculate_next_training(&self, card: &mut Card, grade: u8) {
+        card.stability = Some(card.stability.unwrap() + grade as f32);
+    }
+
+    /// Needed because update_difficulty requires a D(easy_start_diff)
+    fn initial_difficulty_calculation(&self, grade: u8) -> f32 {
+        self.initial_difficulty_4
+            - (self.initial_difficulty_multiplier_5 * (5 - grade) as f32).exp()
+    }
+
     /// Only for the first ever training of a card
-    pub fn calculate_first_difficulty(&mut self, grade: u8, con: &mut PgConnection) {
-        if self.difficulty.is_some() {
+    /// D_0 = initial_difficulty - e^(initial_difficulty_multiplier_5 * (5 - q))
+    pub fn calculate_first_difficulty(&self, card: &mut Card, grade: u8) {
+        if card.difficulty.is_some() {
             //TODO crash
             return;
         }
-        let deck = crate::schema::deck::table
-            .find(self.deck_id)
-            .first::<Deck>(con)
-            .expect("Error loading deck");
-        self.difficulty = Some(deck.initial_difficulty_4 - 2.73 * (5 - grade) as f32);
+        card.difficulty = Some(
+            self.initial_difficulty_4
+                - (self.initial_difficulty_multiplier_5 * (5 - grade) as f32).exp(),
+        );
+    }
+
+    pub fn update_difficulty(&self, card: &mut Card, grade: u8) {
+        let current_difficulty = card.difficulty.unwrap();
+        let difficulty_delta = self.difficulty_adjustment_6 * (grade as f32 - 3.0);
+        // the second multiplication will be always 1 or less, so it makes the difficulty delta
+        // smaller, to never allow it to reach 10 (the max diff)
+        let linear_dampened_delta = difficulty_delta * (10.0 - current_difficulty) / 10.0;
+        let new_difficulty = current_difficulty + linear_dampened_delta;
+        // apply mean regression: The idea here is that if we grade it 3, the difficulty should
+        // converge to its default value. This is important! the default difficulty is whatever the
+        // "good" difficulty is, not the "easy" one.
+        let mean_regressed_difficulty = new_difficulty * (1.0 - self.difficulty_mean_regression_7)
+            + self.difficulty_mean_regression_7 * self.initial_difficulty_calculation(3)
+            + (1.0 - self.difficulty_mean_regression_7) * new_difficulty;
+        card.difficulty = Some(mean_regressed_difficulty);
     }
 }
 
@@ -148,15 +152,4 @@ impl Card {
 pub struct DeckWithCards {
     pub deck: Deck,
     pub card_ids: Vec<i32>,
-}
-
-#[derive(Debug, Insertable, Deserialize, Selectable, Serialize, Queryable)]
-#[diesel(table_name = crate::schema::training_event)]
-#[diesel(belongs_to(Card))]
-#[diesel(check_for_backend(diesel::pg::Pg))]
-pub struct TrainingEvent {
-    pub id: i32,
-    pub card_id: i32,
-    pub event_time: chrono::NaiveDateTime,
-    pub result: f32,
 }
