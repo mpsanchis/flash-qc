@@ -38,14 +38,12 @@ impl RayPicker {
         let mut closest: Option<(f32, FaceHit)> = None;
 
         for (face_idx, plane_point, plane_normal) in faces {
-            if let Some((t, hit_point)) =
+            if let Some((t, _)) =
                 ray_plane_intersection(&cam_pos, &ray_dir, &plane_point, &plane_normal)
+                    .filter(|(_, p)| is_within_face_bounds(face_idx, p))
+                    .filter(|(t, _)| closest.is_none() || *t < closest.as_ref().unwrap().0)
             {
-                if is_within_face_bounds(face_idx, &hit_point) {
-                    if closest.is_none() || t < closest.as_ref().unwrap().0 {
-                        closest = Some((t, FaceHit { face: face_idx }));
-                    }
-                }
+                closest = Some((t, FaceHit { face: face_idx }));
             }
         }
 

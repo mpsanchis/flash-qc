@@ -1,5 +1,5 @@
 mod moves;
 mod state;
 
-pub use moves::{parse_scramble, Move};
-pub use state::{CubeState, B, D, F, L, R, U};
+pub use moves::{Move, parse_scramble};
+pub use state::{B, CubeState, D, F, L, R, U};

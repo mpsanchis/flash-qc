@@ -14,7 +14,7 @@ pub enum Color {
 }
 
 impl Color {
-    pub fn to_rgb(&self) -> [f32; 3] {
+    pub fn to_rgb(self) -> [f32; 3] {
         match self {
             Color::White => [1.0, 1.0, 1.0],
             Color::Yellow => [1.0, 0.85, 0.0],
@@ -45,7 +45,9 @@ impl Face {
     /// Rotate face clockwise
     pub fn rotate_cw(&mut self) {
         let old = self.stickers;
-        self.stickers = [old[6], old[3], old[0], old[7], old[4], old[1], old[8], old[5], old[2]];
+        self.stickers = [
+            old[6], old[3], old[0], old[7], old[4], old[1], old[8], old[5], old[2],
+        ];
     }
 
     /// Check if all stickers are the same color

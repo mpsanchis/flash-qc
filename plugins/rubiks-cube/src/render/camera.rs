@@ -12,7 +12,7 @@ pub struct Camera {
 impl Camera {
     pub fn new(aspect: f32) -> Self {
         Self {
-            distance: 6.0,
+            distance: 8.0,
             rotation: Quaternion::identity(),
             fov: 45.0_f32.to_radians(),
             aspect,
