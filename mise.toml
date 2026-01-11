@@ -11,6 +11,7 @@ description = "Install cargo build dependencies (fqc, diesel_cli, wasm-pack)"
 run = """
 #!/bin/bash
 set -e
+rustup target add wasm32-unknown-unknown
 cargo install --path tools/fqc --force
 cargo install diesel_cli --no-default-features --features postgres-bundled
 cargo install wasm-pack@0.13.1
@@ -69,7 +70,7 @@ if [ -z "$FQC_SKIP_BUILD" ]; then
   mise run build-plugins
 fi
 # CADDYFILE env var should be set by caller (dserve-local or dserve-prod)
-docker compose up --build --force-recreate -d
+docker compose up --build --force-recreate --remove-orphans -d
 """
 
 [tasks.dserve-local]
