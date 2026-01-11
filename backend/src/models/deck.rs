@@ -145,6 +145,21 @@ impl Deck {
         let clamped_difficulty = mean_regressed_difficulty.clamp(1.0, 10.0);
         card.difficulty = Some(clamped_difficulty);
     }
+
+    /// Stability changes during a review when a review has already happened in the same day: short
+    /// term memory
+    pub fn calculate_short_term_stability(&self, card: &Card, grade: u8) -> f32 {
+        let stability = card.stability.unwrap();
+        // when you graph this in geogebra, it is a curve higher than f(x) = x for stability as x
+        // and new stability as y, for grade 3. The function slowly pushes the intra-day stability
+        // until it takes you out of the day.
+        // I am not super sure of this interpretation
+        stability
+            * (self.short_term_stability_exponent_17 * (grade as f32 - 3.0)
+                + self.short_term_stability_exponent_2_18)
+                .exp()
+            * stability.powf(self.short_term_last_stability_exponent_19)
+    }
 }
 
 #[derive(Serialize)]
@@ -243,6 +258,44 @@ mod tests {
             final_difficulty <= 2.0,
             "After 20 successes, difficulty should drop close to 1, got: {:.4}",
             final_difficulty
+        );
+    }
+
+    #[test]
+    fn test_short_term_stability_progression() {
+        let deck = Deck::default();
+        let mut card = create_test_card();
+
+        // Set initial stability
+        card.stability = Some(2.0);
+        let initial_stability = card.stability.unwrap();
+        println!("Initial stability: {:.4}", initial_stability);
+
+        // Fail the card (grade 1 - Again) - short-term review
+        let stability_after_failure = deck.calculate_short_term_stability(&card, 1);
+        println!("Stability after failure: {:.4}", stability_after_failure);
+
+        // Stability should decrease on failure
+        assert!(
+            stability_after_failure < initial_stability,
+            "Stability should decrease on failure. Before: {}, After: {}",
+            initial_stability,
+            stability_after_failure
+        );
+
+        // Update card with failed stability
+        card.stability = Some(stability_after_failure);
+
+        // Succeed with grade 4 (Easy)
+        let stability_after_success = deck.calculate_short_term_stability(&card, 4);
+        println!("Stability after success: {:.4}", stability_after_success);
+
+        // Stability should increase on success
+        assert!(
+            stability_after_success > stability_after_failure,
+            "Stability should increase on success. Before: {}, After: {}",
+            stability_after_failure,
+            stability_after_success
         );
     }
 }
