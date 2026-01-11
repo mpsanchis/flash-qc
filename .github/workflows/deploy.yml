@@ -35,6 +35,7 @@ jobs:
             cd ~/flash-qc
             git fetch origin main
             git reset --hard origin/main
-            docker compose up -d --build --force-recreate --remove-orphans
-            docker compose ps
+            mise install
+            mise run install-build-deps
+            mise run dserve-prod
           '
