@@ -6,17 +6,24 @@ tmux = { version = '3.6a', os = ["linux", "macos"], optional = true }
 uv = '0.8.14'
 "pipx:pre-commit/pre-commit" = 'latest'
 
-[tasks.bootstrap]
+[tasks.install-build-deps]
+description = "Install cargo build dependencies (fqc, diesel_cli, wasm-pack)"
 run = """
 #!/bin/bash
 set -e
-WORKSPACE_ROOT=$PWD
-
 cargo install --path tools/fqc --force
-fqc bootstrap
 cargo install diesel_cli --no-default-features --features postgres
+cargo install wasm-pack@0.13.1
+"""
 
-cd $WORKSPACE_ROOT/backend/
+[tasks.bootstrap]
+description = "Full local setup: install deps, bootstrap config, and reset database"
+depends = ["install-build-deps"]
+run = """
+#!/bin/bash
+set -e
+fqc bootstrap
+cd backend/
 diesel database reset
 """
 
