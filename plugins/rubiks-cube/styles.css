@@ -1,0 +1,71 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #1a1a1e;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+#rubiks-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+#rubiks-canvas:active {
+  cursor: grabbing;
+}
+
+.controls {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 12px 24px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+button {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #2563eb;
+}
+
+button:active {
+  background: #1d4ed8;
+}
+
+#move-counter {
+  color: #e5e5e5;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#status {
+  color: #22c55e;
+  font-size: 14px;
+  font-weight: 600;
+}

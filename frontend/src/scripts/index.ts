@@ -19,6 +19,9 @@ async function checkBackendStatus() {
   }
 }
 
+// Plugins that should not auto-advance after timeout
+const PLUGINS_WITHOUT_TIMEOUT = ["rubiks-cube"];
+
 async function loadPlugin() {
   const iframe = document.getElementById("main-iframe") as HTMLIFrameElement;
   if (!iframe) return;
@@ -35,9 +38,12 @@ async function loadPlugin() {
     })`;
   }
 
-  currentTimeoutCallbackHandler = setTimeout(() => {
-    nextPlugin();
-  }, PLUGIN_TIMEOUT_MS);
+  // Only set timeout for plugins that support it
+  if (!PLUGINS_WITHOUT_TIMEOUT.includes(pluginName)) {
+    currentTimeoutCallbackHandler = setTimeout(() => {
+      nextPlugin();
+    }, PLUGIN_TIMEOUT_MS);
+  }
   console.log(`Loaded plugin: ${pluginName}`);
 }
 

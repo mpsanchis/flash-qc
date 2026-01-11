@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rubik's Cube</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="rubiks-canvas"></canvas>
+    <div class="controls">
+        <button id="reset-btn">Reset</button>
+        <span id="move-counter">Moves: 0</span>
+        <span id="status"></span>
+        <button id="done-btn">Memorized</button>
+    </div>
+
+    <script type="module">
+        import init, { RubiksCube } from './pkg/rubiks_cube.js';
+
+        // >>> Mandatory part: contract to satisfy by plugin
+        const urlParams = new URLSearchParams(window.location.search);
+        const cardId = urlParams.get('cardId');
+
+        async function getCardData() {
+            const response = await fetch(`/api/cards/${cardId}`);
+            const { plugin_data } = await response.json();
+            return plugin_data;
+        }
+        // <<< Mandatory part: contract to satisfy by plugin
+
+        let cube = null;
+        let startTime = null;
+        let solved = false;
+
+        async function run() {
+            // Initialize WASM module
+            await init();
+
+            // Set up canvas size
+            const canvas = document.getElementById('rubiks-canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            // Create cube instance
+            cube = new RubiksCube('rubiks-canvas');
+            cube.setup_event_listeners();
+
+            // Load scramble from card data
+            try {
+                const pluginData = await getCardData();
+                if (pluginData && pluginData.scramble) {
+                    cube.scramble(pluginData.scramble);
+                    document.getElementById('status').textContent = 'Solve the cube!';
+                }
+            } catch (e) {
+                console.log('No card data, using solved cube');
+            }
+
+            startTime = Date.now();
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+                cube.resize(width, height);
+            });
+
+            // Handle Reset button
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                cube.reset();
+                startTime = Date.now();
+                solved = false;
+                document.getElementById('status').textContent = '';
+                updateMoveCounter();
+            });
+
+            // Handle Memorized button - advance to next card
+            document.getElementById('done-btn').addEventListener('click', () => {
+                window.parent.postMessage({ type: 'memorized' }, '*');
+            });
+
+            // Animation loop
+            function animate() {
+                cube.render();
+                updateMoveCounter();
+
+                // Check for solved state
+                if (!solved && cube.is_solved()) {
+                    solved = true;
+                    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+                    document.getElementById('status').textContent = `Solved in ${elapsed}s!`;
+
+                    // Send success message to parent
+                    window.parent.postMessage({
+                        type: 'finish',
+                        reason: 'success',
+                        statusCode: 0,
+                    }, '*');
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        function updateMoveCounter() {
+            if (cube) {
+                document.getElementById('move-counter').textContent = `Moves: ${cube.get_move_count()}`;
+            }
+        }
+
+        run();
+    </script>
+</body>
+</html>

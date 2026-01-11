@@ -141,6 +141,8 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
+  plugins/rubiks-cube: {}
+
 packages:
 
   '@antfu/ni@25.0.0':
