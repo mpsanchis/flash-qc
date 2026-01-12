@@ -2,13 +2,15 @@ INSERT INTO deck (id, name) VALUES
 (1, 'Da Vinci'),
 (2, 'Memorization Deck'),
 (3, 'Front & Back Deck'),
-(4, 'Drawing Canvas');
+(4, 'Drawing Canvas'),
+(5, 'Rubik''s Cube');
 
 INSERT INTO plugin (id, name) VALUES
 (1, 'flip-word'),
 (2, 'dummy'),
 (3, 'da-vinci-facts'),
-(4, 'drawing-canvas');
+(4, 'drawing-canvas'),
+(5, 'rubiks-cube');
 
 INSERT INTO card (id, deck_id, plugin_id, plugin_name, plugin_data, difficulty, stability, retrievability) VALUES
 -- da vinci deck
@@ -25,7 +27,12 @@ INSERT INTO card (id, deck_id, plugin_id, plugin_name, plugin_data, difficulty, 
 -- Drawing Canvas
 (9, 4, 4, 'drawing-canvas', '{"imageName": "ferris.png"}', NULL, NULL, NULL),
 (10, 4, 4, 'drawing-canvas', '{"imageName": "ferris-wizard.png"}', NULL, NULL, NULL),
-(11, 4, 4, 'drawing-canvas', '{"imageName": "ferris-viking.png"}', NULL, NULL, NULL);
+(11, 4, 4, 'drawing-canvas', '{"imageName": "ferris-viking.png"}', NULL, NULL, NULL),
+-- Rubik's Cube
+(12, 5, 5, 'rubiks-cube', '{"scramble": "R", "difficulty": "trivial"}', NULL, NULL, NULL),
+(13, 5, 5, 'rubiks-cube', '{"scramble": "R U R'' U''", "difficulty": "beginner"}', NULL, NULL, NULL),
+(14, 5, 5, 'rubiks-cube', '{"scramble": "F R U R'' U'' F''", "difficulty": "beginner"}', NULL, NULL, NULL),
+(15, 5, 5, 'rubiks-cube', '{"scramble": "R U R'' U R U2 R''", "difficulty": "intermediate"}', NULL, NULL, NULL);
 
 -- import user data
 -- Password is "password" created manually with argon2
