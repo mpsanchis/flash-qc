@@ -160,6 +160,27 @@ impl Deck {
                 .exp()
             * stability.powf(self.short_term_last_stability_exponent_19)
     }
+
+    pub fn calculate_long_term_stability(&self, card: &mut Card, grade: u8) {
+        let current_retrievability = card.retrievability.unwrap();
+        let stability = card.stability.unwrap();
+        let difficulty = card.difficulty.unwrap();
+        let mut new_stability = stability;
+        if grade == 1 {
+            // failed:
+            let new_possible_stability = self.fail_stability_multiplier_11
+                * difficulty.powf(self.fail_stability_negative_power_12)
+                * ((stability + 1.0).powf(self.fail_stability_power_13) - 1.0)
+                * (self.fail_stability_exponent_14 * (1.0 - current_retrievability)).exp();
+            // the if ensures that we never go up.
+            if new_possible_stability < stability {
+                new_stability = new_possible_stability;
+            }
+            card.stability = Some(new_stability);
+        } else {
+            // passed
+        }
+    }
 }
 
 #[derive(Serialize)]
@@ -296,6 +317,44 @@ mod tests {
             "Stability should increase on success. Before: {}, After: {}",
             stability_after_failure,
             stability_after_success
+        );
+    }
+
+    #[test]
+    fn test_long_term_stability_on_failure() {
+        let deck = Deck::default();
+        let mut card = create_test_card();
+
+        // Set initial values
+        card.stability = Some(5.0);
+        card.difficulty = Some(5.0);
+        card.retrievability = Some(0.8); // 80% retrievability
+
+        let initial_stability = card.stability.unwrap();
+        println!("Initial stability: {:.4}", initial_stability);
+        println!(
+            "Initial retrievability: {:.4}",
+            card.retrievability.unwrap()
+        );
+
+        // Fail the card (grade 1 - Again) - long-term review
+        deck.calculate_long_term_stability(&mut card, 1);
+        let stability_after_failure = card.stability.unwrap();
+        println!("Stability after failure: {:.4}", stability_after_failure);
+
+        // Stability should decrease significantly on failure
+        assert!(
+            stability_after_failure < initial_stability,
+            "Stability should decrease on failure. Before: {}, After: {}",
+            initial_stability,
+            stability_after_failure
+        );
+
+        // The new stability should be positive
+        assert!(
+            stability_after_failure > 0.0,
+            "Stability should remain positive: {}",
+            stability_after_failure
         );
     }
 }
