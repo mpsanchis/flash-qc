@@ -227,6 +227,7 @@ dependencies = [
  "iana-time-zone",
  "js-sys",
  "num-traits",
+ "serde",
  "wasm-bindgen",
  "windows-link",
 ]
@@ -270,6 +271,12 @@ name = "clap_lex"
 version = "0.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a1d728cc89cf3aee9ff92b05e62b19ee65a02b5702cff7d5a377e32c6ae29d8d"
+
+[[package]]
+name = "cmath"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7a12a44a1526c3fa132c625212c858ba4f24e1918ac2de9e4ff7f4a26a83af87"
 
 [[package]]
 name = "colorchoice"
@@ -398,6 +405,7 @@ checksum = "e130c806dccc85428c564f2dc5a96e05b6615a27c9a28776bd7761a9af4bb552"
 dependencies = [
  "bitflags",
  "byteorder",
+ "chrono",
  "diesel_derives",
  "downcast-rs",
  "itoa",
@@ -543,6 +551,7 @@ dependencies = [
  "argon2",
  "base64",
  "chrono",
+ "cmath",
  "diesel",
  "dotenvy",
  "openssl-sys",
